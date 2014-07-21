@@ -1,5 +1,5 @@
 var url = require('url'),
-    querystring = require('querystring');
+	urlBuilder = require('./lib/url-builder');
 
 /**
  * @typedef {Object} APIObject
@@ -46,7 +46,7 @@ function createAPIMethod(APIMethodOptions, APIObject) {
     return function(params, callback) {
 
         // console.log(querystring.stringify(undefined));
-        methodURL += '?' + querystring.stringify(params);
+        methodURL = urlBuilder.build(methodURL, params);
 
         console.log(methodURL);
     };
