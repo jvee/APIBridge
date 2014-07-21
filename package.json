@@ -1,14 +1,17 @@
 {
-  "name": "APIBridge",
-  "version": "0.0.0",
-  "description": "APIBridge is easyest way to wrap outer service api into node module functions",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "API"
-  ],
-  "author": "jvee <jvee99@gmail.com>",
-  "license": "ISC"
+    "name": "APIBridge",
+    "version": "0.0.0",
+    "description": "APIBridge is easyest way to wrap outer service api into node module functions",
+    "main": "index.js",
+    "scripts": {
+        "test": "node_modules/.bin/mocha --reporter spec"
+    },
+    "keywords": [
+        "API"
+    ],
+    "author": "jvee <jvee99@gmail.com>",
+    "license": "ISC",
+    "devDependencies": {
+        "mocha": "^1.20.1"
+    }
 }
