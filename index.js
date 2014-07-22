@@ -1,4 +1,5 @@
 var url = require('url'),
+	request = require('request'),
 	urlBuilder = require('./lib/url-builder');
 
 /**
@@ -43,10 +44,17 @@ function APIbridge(APIObject) {
 function createAPIMethod(APIMethodOptions, APIObject) {
     var methodURL = url.resolve(APIObject.base, APIMethodOptions.url || APIMethodOptions);
 
+    // generate request method
+    // var APIrequest = new request(APIOBject...)
+
     return function(params, callback) {
 
         // console.log(querystring.stringify(undefined));
         methodURL = urlBuilder.build(methodURL, params);
+
+        request({ url: methodURL }, function (err, response) {
+			console.log(JSON.parse(response.body));
+        });
 
         console.log(methodURL);
     };
