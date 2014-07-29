@@ -3,8 +3,18 @@ var url = require('url'),
 	urlBuilder = require('./lib/url-builder');
 
 /**
- * @typedef {Object} APIObject
- * @property {Object} models
+ * @typedef {Object} APIRoot
+ * @property {String} name Имя создаваемого API
+ * @property {APIModel[]} models
+ * @property {APIOptions} options
+ */
+
+/**
+ * @typedef {Object} APIModel
+ */
+
+/**
+ * @typedef {Object} APIOptions
  */
 
 
