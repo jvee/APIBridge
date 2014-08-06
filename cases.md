@@ -5,16 +5,27 @@
 {
 	name: 'Instagram',
 	models: [{
-		locations: [
-			{ search: 'https://api.instagram.com/v1/locations/search' },
-            { get: 'https://api.instagram.com/v1/locations/:id },
-            { recent: 'https://api.instagram.com/v1/locations/:id/media/recent' }
-		],
-		users: [
-			{ get: 'https://api.instagram.com/v1/user/:id' },
-			{ selfFeed: 'https://api.instagram.com/v1/users/self/feed' }
-		]
-	}]
+				name: 'locations',
+				endpoints: [{
+								name: 'search',
+								url: 'https://api.instagram.com/v1/locations/search'
+							},{
+								name: 'get',
+								url: 'https://api.instagram.com/v1/locations/:id
+							},{
+								name: 'recent',
+								url: 'https://api.instagram.com/v1/locations/:id/media/recent'
+							}]
+			},{
+				name: 'users',
+				endpoints: [{
+								name: 'get',
+								url: 'https://api.instagram.com/v1/user/:id'
+							},{
+								name: 'selfFeed',
+								url: 'https://api.instagram.com/v1/users/self/feed'
+							}]
+			}]
 }
 
 2. Базовый урл и формат ответов вынесен в глобальные настройки API:
@@ -22,14 +33,20 @@
 {
 	name: 'Instagram',
 	options: {
-		base: 'https://api.instagram.com/v1/',
+		baseURL: 'https://api.instagram.com/v1/',
 		dataType: 'json'
 	},
 	models: [{
-		locations: [
-			{ search: 'locations/search' },
-            { get: 'locations/:id },
-            { recent: 'locations/:id/media/recent' }
-		]
-	}]
+				name: 'locations',
+				endpoints: [{
+								name: 'search',
+								url: 'locations/search'
+							},{
+								name: 'get',
+								url: 'locations/:id
+							},{
+								name: 'recent',
+								url: 'locations/:id/media/recent'
+							}]
+			}]
 }
