@@ -50,13 +50,13 @@ describe('APINormalizer', function () {
 
 	describe('Common', function () {
 		it('should export a function', function () {
-			assert(typeof normalizer.exec, 'function');
+			assert.equal(typeof normalizer, 'function');
 		});
 	});
 
 	describe('Result', function () {
 		it('should work with basic api description', function () {
-			assert.deepEqual(normalizer.exec(mock_1), mock_1_normalized);
+			assert.deepEqual(normalizer(mock_1), mock_1_normalized);
 		});
 	});
 
