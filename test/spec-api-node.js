@@ -8,10 +8,12 @@ var assert = require('assert'),
 			return ['.', '.locations', '.locations.search'];
 		},
 		getNode: function (nodePath) {
-			return this[nodePath];
+			return this.nodes[nodePath];
 		},
-		'.locations': data.decl_1_normalized['.locations'],
-		'.': data.decl_1_normalized['.']
+		nodes: {
+			'.locations': data.decl_1_normalized['.locations'],
+			'.': data.decl_1_normalized['.']
+		}
 	};
 
 describe('APINode', function () {
@@ -37,11 +39,11 @@ describe('APINode', function () {
 
 	describe('APINode#getParent()', function () {
 		it('should return parent node without arguments', function () {
-			assert.equal(apiNode.getParent(), shadowTreeStub['.locations']);
+			assert.equal(apiNode.getParent(), shadowTreeStub.nodes['.locations']);
 		});
 
 		it('should return node from path in arguments', function () {
-			assert.equal(apiNode.getParent('.'), shadowTreeStub['.']);
+			assert.equal(apiNode.getParent('.'), shadowTreeStub.nodes['.']);
 		});
 
 		it('should return undefined with wrong argument', function () {
@@ -51,7 +53,7 @@ describe('APINode', function () {
 
 	describe('APINode#getParents', function () {
 		it('should retunr array with all parents nodes', function () {
-			assert.deepEqual(apiNode.getParents(), [shadowTreeStub['.'], shadowTreeStub['.locations']]);
+			assert.deepEqual(apiNode.getParents(), [shadowTreeStub.nodes['.'], shadowTreeStub.nodes['.locations']]);
 		});
 	});
 
