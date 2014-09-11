@@ -2,7 +2,8 @@ var assert = require('assert'),
 	APIShadowTree = require('../lib/api-shadow-tree'),
 	data = require('./data'),
 	decl_1_normalized = data.decl_1_normalized,
-	shadowTree;
+	shadowTree,
+	pathKeys;
 
 describe('APIShadowTree', function () {
 
@@ -46,6 +47,27 @@ describe('APIShadowTree', function () {
 
 		it('should return empty array with wrong arguments', function () {
 			assert.deepEqual(shadowTree.splitPath(), []);
+		});
+	});
+
+	describe('#getPathKeys()', function () {
+
+		before(function () {
+			pathKeys = shadowTree.getPathKeys();
+		});
+
+		it('should return array with all node paths of tree', function () {
+			assert.equal(pathKeys.length, 5);
+			assert.ok(pathKeys.indexOf('.') + 1);
+			assert.ok(pathKeys.indexOf('.locations') + 1);
+			assert.ok(pathKeys.indexOf('.locations.search') + 1);
+			assert.ok(pathKeys.indexOf('.locations.get') + 1);
+			assert.ok(pathKeys.indexOf('.locations.recent') + 1);
+		});
+
+		it('should return sorted array', function () {
+			var orderedKeys = ['.', '.locations', '.locations.get', '.locations.recent', '.locations.search'];
+			assert.deepEqual(pathKeys, orderedKeys);
 		});
 	});
 
