@@ -71,4 +71,10 @@ describe('APIShadowTree', function () {
 		});
 	});
 
+	describe('#export()', function () {
+		it('should export correct strucutre', function () {
+			console.log(shadowTree.export());
+		});
+	});
+
 });
