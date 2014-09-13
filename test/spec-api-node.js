@@ -3,7 +3,7 @@ var assert = require('assert'),
 	data = require('./data'),
 	apiNodeDecl = data.decl_1_normalized['.locations.search'],
 	apiNodePath = '.locations.search';
-	shadowTreeStub = {
+	treeStub = {
 		splitPath: function () {
 			return ['.', '.locations', '.locations.search'];
 		},
@@ -19,7 +19,7 @@ var assert = require('assert'),
 describe('APINode', function () {
 
 	beforeEach(function () {
-		apiNode = new APINode(apiNodeDecl, apiNodePath, shadowTreeStub);
+		apiNode = new APINode(apiNodeDecl, apiNodePath, treeStub);
 	});
 
 	it('should construct object', function () {
@@ -39,11 +39,11 @@ describe('APINode', function () {
 
 	describe('APINode#getParent()', function () {
 		it('should return parent node without arguments', function () {
-			assert.equal(apiNode.getParent(), shadowTreeStub.nodes['.locations']);
+			assert.equal(apiNode.getParent(), treeStub.nodes['.locations']);
 		});
 
 		it('should return node from path in arguments', function () {
-			assert.equal(apiNode.getParent('.'), shadowTreeStub.nodes['.']);
+			assert.equal(apiNode.getParent('.'), treeStub.nodes['.']);
 		});
 
 		it('should return undefined with wrong argument', function () {
@@ -53,13 +53,13 @@ describe('APINode', function () {
 
 	describe('APINode#getParents', function () {
 		it('should retunr array with all parents nodes', function () {
-			assert.deepEqual(apiNode.getParents(), [shadowTreeStub.nodes['.'], shadowTreeStub.nodes['.locations']]);
+			assert.deepEqual(apiNode.getParents(), [treeStub.nodes['.'], treeStub.nodes['.locations']]);
 		});
 	});
 
 	describe('APINode#setTree()', function () {
 		it('should add method #getTree(), that returns APIShadowTree instance from closure', function () {
-			assert.equal(apiNode.getTree(), shadowTreeStub);
+			assert.equal(apiNode.getTree(), treeStub);
 		});
 	});
 
