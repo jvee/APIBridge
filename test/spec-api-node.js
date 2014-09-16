@@ -63,4 +63,19 @@ describe('APINode', function () {
 		});
 	});
 
+	describe('APINode#getOptionsChain()', function () {
+		it('should return array of options of all parents and current node in right order', function () {
+			var optionsChain;
+
+			treeStub.nodes['.'].options = { baseUrl: 'https://api' };
+			treeStub.nodes['.locations'].options = {};
+
+			optionsChain = apiNode.getOptionsChain();
+
+			assert.equal(optionsChain.length, 3);
+			assert.ok(optionsChain[0].baseUrl);
+			assert.ok(optionsChain[2].url);
+		});
+	});
+
 });
