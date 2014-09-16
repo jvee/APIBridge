@@ -18,8 +18,12 @@ describe('APITree', function () {
 
 	describe('Result', function () {
 		it('shoul build object with nodes', function () {
-			// не забыть описать этот момент
-			console.log(tree);
+			assert.ok(tree.nodes);
+			assert.ok(tree.nodes['.']);
+			assert.ok(tree.nodes['.locations']);
+			assert.ok(tree.nodes['.locations.get']);
+			assert.ok(tree.nodes['.locations.search']);
+			assert.ok(tree.nodes['.locations.recent']);
 		});
 	});
 
@@ -49,9 +53,33 @@ describe('APITree', function () {
 		});
 	});
 
-	describe('#export()', function () {
-		it('should export correct strucutre', function () {
-			console.log(tree.export());
+	describe('#isChildOf()', function () {
+		it('should return correct result', function () {
+			var rootNode = tree.getNode('.'),
+				locationsNode = tree.getNode('.locations'),
+				searchNode = tree.getNode('.locations.get');
+			assert.equal(tree.isChildOf(rootNode, locationsNode), true);
+			assert.equal(tree.isChildOf(locationsNode, rootNode), false);
+			assert.equal(tree.isChildOf(rootNode, searchNode), false);
 		});
 	});
+
+	describe('#export()', function () {
+		it('should export correct strucutre', function () {
+			var exportedTree = tree.export();
+			assert.equal(typeof exportedTree, 'object');
+			assert.equal(typeof exportedTree.locations, 'object');
+			assert.equal(typeof exportedTree.locations.get, 'function');
+			assert.equal(typeof exportedTree.locations.recent, 'function');
+			assert.equal(typeof exportedTree.locations.search, 'function');
+		});
+	});
+
+	describe('#exportEndpoint()', function () {
+		it('should return function', function () {
+			var node = tree.getNode('.locations.get');
+			assert.equal(typeof tree.exportEndpoint(node), 'function');
+		});
+	});
+
 });
