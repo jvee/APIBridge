@@ -2,7 +2,7 @@ var assert = require('assert'),
 	APITree = require('../lib/api-tree'),
 	data = require('./data'),
 	decl_1_normalized = data.decl_1_normalized,
-	tree;
+	tree, node, exportedEndpoint, request;
 
 describe('APITree', function () {
 
@@ -76,10 +76,86 @@ describe('APITree', function () {
 	});
 
 	describe('#exportEndpoint()', function () {
-		it('should return function', function () {
-			var node = tree.getNode('.locations.get');
-			assert.equal(typeof tree.exportEndpoint(node), 'function');
+		// в queue поддержать проброс промисовых объектов
+		// подготовить локальный сервер для тестирования
+
+		beforeEach(function () {
+			node = tree.getNode('.locations.get');
+			// Добавить в tree и тестировать extend
+			node.options.data = {
+				client_id: '22aaafad8e8447cf883c2cbb55663de5'
+			};
+
+			node.options.url = 'https://api.instagram.com/v1/locations/1';
+			node.options.prefilter = undefined;
+			node.options.processResult = undefined;
+
+			exportedEndpoint = tree.exportEndpoint(node);
 		});
+
+		it('should return function', function () {
+			assert.equal(typeof exportedEndpoint, 'function');
+		});
+
+		it('should return promise', function () {
+			assert.equal(typeof exportedEndpoint().then, 'function');
+		});
+
+		it('should create request', function (done) {
+			exportedEndpoint()
+				.then(function (response) {
+					assert.equal(response.request.status, 200);
+
+					done();
+				});
+		});
+
+		it('should accept options.prefilter function', function (done) {
+			var prefilterExecuted = false;
+
+			// spy
+			node.options.prefilter = function (options) {
+				options.url = 'https://api.instagram.com/v1/locations/3';
+				prefilterExecuted = true;
+			};
+
+			exportedEndpoint()
+				.then(function (response) {
+					assert.equal(response.data.data.id, '3');
+					assert.equal(prefilterExecuted, true);
+
+					done();
+				});
+		});
+
+		it('should accept options.processResult function', function (done) {
+			var processExecuted = false;
+
+			// spy
+			node.options.processResult = function (response) {
+				processExecuted = true;
+				return response.data;
+			};
+
+			exportedEndpoint()
+				.then(function (response) {
+					assert.equal(response.data.id, '1');
+					assert.equal(processExecuted, true);
+
+					done();
+				});
+		});
+
+		it('should exec promise.fail if executed with wrong params', function (done) {
+			exportedEndpoint({ client_id: '' /* fail: true для будущего сервера */ })
+				.fail(function (response) {
+					assert.equal(response.status, 400);
+					done();
+				});
+		});
+
+		// it('should exec promise.fail if options.prefilter returns false', function () {});
+
 	});
 
 });
