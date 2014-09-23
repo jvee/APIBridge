@@ -12,9 +12,10 @@ before(function () {
 
 describe('Test Server', function () {
 
-	it('should handle root request', function (done) {
+	it('should handle root "GET" request', function (done) {
 		var options = {
-			url: baseUrl
+			url: baseUrl,
+			qs: { queryParam: 'someValue' }
 		};
 
 		request(options, function (err, req, res) {
@@ -26,9 +27,12 @@ describe('Test Server', function () {
 
 			assert.equal(data.status, 'ok');
 			assert.equal(data.path, '/');
+			assert.equal(data.query.queryParam, 'someValue');
 
 			done();
 		});
+
+
 	});
 
 });
