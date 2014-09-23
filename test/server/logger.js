@@ -1,20 +1,13 @@
 var logger = require('morgan');
+var tokens = ['query', 'body', 'headers'];
 
-// POST ?
-// COLOR ?
-logger.token('query', function (req, res) {
-	return JSON.stringify(req.query);
+tokens.forEach(function(token, index) {
+	logger.token(token, function (req, res) {
+		return JSON.stringify(req[token], null, '\t').replace(/\}$/, '   }');
+	});
 });
 
-logger.token('body', function (req, res) {
-	return JSON.stringify(req.body);
-});
-
-logger.token('headers', function (req, res) {
-	return JSON.stringify(req.headers);
-});
-
-logFormat = [
+var logFormat = [
 	'--------------------------------------------------------------------------',
 	'   :method :url :status :response-time ms',
 	'   Query: :query',
