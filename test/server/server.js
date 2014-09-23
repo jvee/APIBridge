@@ -10,4 +10,8 @@ app.get('/', function (req, res) {
 	});
 });
 
+if (process.argv.indexOf('--run') > 0) {
+	app.listen(3000);
+}
+
 module.exports = app;
