@@ -31,6 +31,29 @@ describe('Test Server', function () {
 
 			done();
 		});
+	});
+
+	it('should handle root "POST" request', function (done) {
+		var options = {
+			url: baseUrl,
+			qs: { queryParam: 'someValue' },
+			form: { bodyParam: 'someValue' }
+		};
+
+		request(options, function (err, req, res) {
+			if (err) return done(err);
+
+			assert.equal(req.statusCode, 200);
+
+			var data = JSON.parse(res);
+
+			assert.equal(data.status, 'ok');
+			assert.equal(data.path, '/');
+			assert.equal(data.body.bodyParam, 'someValue');
+			assert.equal(data.body.queryParam, undefined);
+
+			done();
+		});
 
 
 	});
