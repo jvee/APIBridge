@@ -1,5 +1,6 @@
 var express = require('express'),
-	app = express();
+	app = express(),
+	config = require('./config');
 
 
 app.get('/', function (req, res) {
@@ -11,7 +12,7 @@ app.get('/', function (req, res) {
 });
 
 if (process.argv.indexOf('--run') > 0) {
-	app.listen(3000);
+	app.listen(config.port);
 }
 
 module.exports = app;

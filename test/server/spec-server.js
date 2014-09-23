@@ -1,8 +1,9 @@
 var assert = require('assert'),
 	app = require('./server'),
 	request = require('request'),
-	port = 3000,
-	baseUrl = 'http://localhost:' + port + '/',
+	config = require('./config'),
+	port = config.port,
+	baseUrl = 'http://' + config.host + ':' + port + '/',
 	server;
 
 before(function () {
