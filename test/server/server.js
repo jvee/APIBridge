@@ -21,10 +21,9 @@ app.all('*', function (req, res) {
 	});
 });
 
-// Просто проверять process
-// что-то типа isChildProcess
-if (process.argv.indexOf('--run') > 0) {
+if (!module.parent) {
 	app.listen(config.port);
+} else {
+	module.exports = app;
 }
 
-module.exports = app;
