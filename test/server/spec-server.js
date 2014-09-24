@@ -58,6 +58,36 @@ describe('Test Server', function () {
 
 	});
 
+	it('should respnse with statusCode passed as parameter "status"', function (done) {
+		var options = {
+			url: baseUrl,
+			form: { code: 500 },
+			method: 'POST'
+		};
+
+		request(options, function (err, req, res) {
+			if (err) return done(err);
+
+			assert.equal(req.statusCode, 500);
+
+			done();
+		});
+	});
+
+	it('should response with statusCode passed as url parameter to /status/:code', function (done) {
+		var options = {
+			url: baseUrl + 'status/404',
+		};
+
+		request(options, function (err, req, res) {
+			if (err) return done(err);
+
+			assert.equal(req.statusCode, 404);
+
+			done();
+		});
+	});
+
 });
 
 after(function () {

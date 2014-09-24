@@ -10,6 +10,11 @@ if (process.argv.indexOf('--log') > 0) {
 	app.use(logger);
 }
 
+// setting response status
+app.all('*', setStatusCode);
+app.all('/status/:code', setStatusCode);
+
+
 app.all('*', function (req, res) {
 	res.json({
 		name: 'Test Server',
@@ -27,3 +32,26 @@ if (!module.parent) {
 	module.exports = app;
 }
 
+/**
+ * Setting status code middleware depended on request params
+ * @param {Object}   req
+ * @param {Object}   res
+ * @param {Function} next
+ */
+function setStatusCode(req, res, next) {
+	var code = parseInt(req.param('code'), 10);
+
+	if (isStatusCode(code)) {
+		res.status(code);
+	}
+
+	next();
+}
+/**
+ * Checking value for statusCode
+ * @param  {Number}  code
+ * @return {Boolean}
+ */
+function isStatusCode(code) {
+	return typeof code === 'number' && !isNaN(code) && code > 99 && code < 1000;
+}
