@@ -15,16 +15,11 @@ describe('Test Server', function () {
 	it('should handle root "GET" request', function (done) {
 		var options = {
 			url: baseUrl,
-			qs: { queryParam: 'someValue' }
+			data: { queryParam: 'someValue' }
 		};
 
-		request(options, function (err, req, res) {
-			if (err) return done(err);
-
+		rGet(options, done, function (data, req) {
 			assert.equal(req.statusCode, 200);
-
-			var data = JSON.parse(res);
-
 			assert.equal(data.status, 'ok');
 			assert.equal(data.path, '/');
 			assert.equal(data.query.queryParam, 'someValue');
@@ -37,16 +32,11 @@ describe('Test Server', function () {
 		var options = {
 			url: baseUrl,
 			qs: { queryParam: 'someValue' },
-			form: { bodyParam: 'someValue' }
+			data: { bodyParam: 'someValue' }
 		};
 
-		request(options, function (err, req, res) {
-			if (err) return done(err);
-
+		rPost(options, done, function (data, req) {
 			assert.equal(req.statusCode, 200);
-
-			var data = JSON.parse(res);
-
 			assert.equal(data.status, 'ok');
 			assert.equal(data.path, '/');
 			assert.equal(data.body.bodyParam, 'someValue');
@@ -54,23 +44,21 @@ describe('Test Server', function () {
 
 			done();
 		});
-
-
 	});
 
-	it('should respnse with statusCode passed as parameter "status"', function (done) {
+	it('should respnse with statusCode passed as parameter "code"', function (done) {
 		var options = {
 			url: baseUrl,
-			form: { code: 500 },
-			method: 'POST'
+			data: { code: 500 }
 		};
 
-		request(options, function (err, req, res) {
-			if (err) return done(err);
-
+		rGet(options, done, function (data, req) {
 			assert.equal(req.statusCode, 500);
 
-			done();
+			rPost(options, done, function (data, req) {
+				assert.equal(req.statusCode, 500);
+				done();
+			});
 		});
 	});
 
@@ -79,12 +67,13 @@ describe('Test Server', function () {
 			url: baseUrl + 'status/404',
 		};
 
-		request(options, function (err, req, res) {
-			if (err) return done(err);
-
+		rGet(options, done, function (data, req) {
 			assert.equal(req.statusCode, 404);
 
-			done();
+			rPost(options, done, function (data, req) {
+				assert.equal(req.statusCode, 404);
+				done();
+			});
 		});
 	});
 
@@ -93,3 +82,41 @@ describe('Test Server', function () {
 after(function () {
 	server.close();
 });
+
+/* -------------------------------------------------- */
+/*                    Helpers                         */
+/* -------------------------------------------------- */
+
+function requester(method, options, done, callback) {
+	if (!options) options = {};
+
+	if (typeof callback !== 'function') throw new Error('Probably "done" not provided');
+
+	options = JSON.parse(JSON.stringify(options));
+
+	options.method = method;
+
+	if (options.data) {
+		if (method == 'GET') {
+			options.qs = options.data;
+		} else {
+			options.form = options.data;
+		}
+	}
+
+	request(options, function (err, req, res) {
+		if (err) done(err);
+
+		var data = JSON.parse(res);
+
+		callback(data, req);
+	});
+}
+
+function rGet(options, done, callback) {
+	return requester('GET', options, done, callback);
+}
+
+function rPost(options, done, callback) {
+	return requester('POST', options, done, callback);
+}
