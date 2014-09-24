@@ -1,7 +1,10 @@
+var config = require('./server/config'),
+	testHost = 'http://' + config.host + ':' + config.port + '/';
+
 module.exports = {
 	decl_1: {
 		name: 'Instagram',
-		baseURL: 'https://api.instagram.com/v1/',
+		baseURL: testHost,
 		dataType: 'json',
 		models: [{
 					name: 'locations',
@@ -20,7 +23,7 @@ module.exports = {
 	decl_1_normalized: {
 		'.': {
 			name: 'Instagram',
-			baseURL: 'https://api.instagram.com/v1/',
+			baseURL: testHost,
 			dataType: 'json',
 			nodeType: 'root'
 		},
