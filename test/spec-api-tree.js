@@ -20,18 +20,18 @@ describe('APITree', function () {
 		it('shoul build object with nodes', function () {
 			assert.ok(tree.nodes);
 			assert.ok(tree.nodes['.']);
-			assert.ok(tree.nodes['.locations']);
-			assert.ok(tree.nodes['.locations.get']);
-			assert.ok(tree.nodes['.locations.search']);
-			assert.ok(tree.nodes['.locations.recent']);
+			assert.ok(tree.nodes['.layer']);
+			assert.ok(tree.nodes['.layer.handlerTwo']);
+			assert.ok(tree.nodes['.layer.handlerOne']);
+			assert.ok(tree.nodes['.layer.handlerThree']);
 		});
 	});
 
 	describe('#getNode()', function () {
 		it('should correctly return requested node', function () {
-			assert.equal(tree.getNode('.locations').name , 'locations');
-			assert.equal(tree.getNode('.locations.search').name, 'search');
-			assert.equal(tree.getNode('.').name, 'Instagram');
+			assert.equal(tree.getNode('.layer').name , 'layer');
+			assert.equal(tree.getNode('.layer.handlerOne').name, 'handlerOne');
+			assert.equal(tree.getNode('.').name, 'TestAPI');
 		});
 
 		it('should return "undefined" with wrong arguments', function () {
@@ -56,11 +56,11 @@ describe('APITree', function () {
 	describe('#isChildOf()', function () {
 		it('should return correct result', function () {
 			var rootNode = tree.getNode('.'),
-				locationsNode = tree.getNode('.locations'),
-				searchNode = tree.getNode('.locations.get');
-			assert.equal(tree.isChildOf(rootNode, locationsNode), true);
-			assert.equal(tree.isChildOf(locationsNode, rootNode), false);
-			assert.equal(tree.isChildOf(rootNode, searchNode), false);
+				layerNode = tree.getNode('.layer'),
+				handlerOneNode = tree.getNode('.layer.handlerTwo');
+			assert.equal(tree.isChildOf(rootNode, layerNode), true);
+			assert.equal(tree.isChildOf(layerNode, rootNode), false);
+			assert.equal(tree.isChildOf(rootNode, handlerOneNode), false);
 		});
 	});
 
@@ -68,10 +68,10 @@ describe('APITree', function () {
 		it('should export correct strucutre', function () {
 			var exportedTree = tree.export();
 			assert.equal(typeof exportedTree, 'object');
-			assert.equal(typeof exportedTree.locations, 'object');
-			assert.equal(typeof exportedTree.locations.get, 'function');
-			assert.equal(typeof exportedTree.locations.recent, 'function');
-			assert.equal(typeof exportedTree.locations.search, 'function');
+			assert.equal(typeof exportedTree.layer, 'object');
+			assert.equal(typeof exportedTree.layer.handlerOne, 'function');
+			assert.equal(typeof exportedTree.layer.handlerTwo, 'function');
+			assert.equal(typeof exportedTree.layer.handlerThree, 'function');
 		});
 	});
 
@@ -80,7 +80,7 @@ describe('APITree', function () {
 		// подготовить локальный сервер для тестирования
 
 		beforeEach(function () {
-			node = tree.getNode('.locations.get');
+			node = tree.getNode('.layer.handlerTwo');
 			// Добавить в tree и тестировать extend
 			node.options.data = {
 				client_id: '22aaafad8e8447cf883c2cbb55663de5'

@@ -2,49 +2,62 @@ var config = require('./server/config'),
 	testHost = 'http://' + config.host + ':' + config.port + '/';
 
 module.exports = {
+	testHost: testHost,
+
 	decl_1: {
-		name: 'Instagram',
+		name: 'TestAPI',
 		baseURL: testHost,
 		dataType: 'json',
+		cascade: { rootLevel: true },
 		models: [{
-					name: 'locations',
+					name: 'layer',
+					cascade: { layerLevel: true },
 					endpoints: [{
-									name: 'search',
-									url: 'locations/search'
+									name: 'handlerOne',
+									cascade: { handlerLevel: true },
+									url: testHost + 'layer/handlerOne'
 								},{
-									name: 'get',
-									url: 'locations/:id'
+									name: 'handlerTwo',
+									cascade: { handlerLevel: true },
+									url: testHost + 'layer/handlerTwo'
 								},{
-									name: 'recent',
-									url: 'locations/:id/media/recent'
+									name: 'handlerThree',
+									cascade: { handlerLevel: true },
+									url: testHost + 'layer/handlerThree'
 								}]
 				}]
 	},
+
 	decl_1_normalized: {
 		'.': {
-			name: 'Instagram',
+			name: 'TestAPI',
 			baseURL: testHost,
 			dataType: 'json',
-			nodeType: 'root'
+			nodeType: 'root',
+			cascade: { rootLevel: true  }
 		},
-		'.locations': {
-			name: 'locations',
+		'.layer': {
+			name: 'layer',
+			cascade: { layerLevel: true },
 			nodeType: 'models'
 		},
-		'.locations.search': {
-			name: 'search',
-			url: 'locations/search',
+		'.layer.handlerOne': {
+			name: 'handlerOne',
+			cascade: { handlerLevel: true },
+			url: testHost + 'layer/handlerOne',
 			nodeType: 'endpoints'
 		},
-		'.locations.get': {
-			name: 'get',
-			url: 'locations/:id',
+		'.layer.handlerTwo': {
+			name: 'handlerTwo',
+			cascade: { handlerLevel: true },
+			url: testHost + 'layer/handlerTwo',
 			nodeType: 'endpoints'
 		},
-		'.locations.recent': {
-			name: 'recent',
-			url: 'locations/:id/media/recent',
+		'.layer.handlerThree': {
+			name: 'handlerThree',
+			cascade: { handlerLevel: true },
+			url: testHost + 'layer/handlerThree',
 			nodeType: 'endpoints'
 		}
 	}
-}
+};
