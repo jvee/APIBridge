@@ -1,8 +1,10 @@
 var assert = require('assert'),
 	APINode = require('../lib/api-node'),
+	extend = require('extend'),
 	data = require('./data'),
-	apiNodeDecl = data.decl_1_normalized['.locations.search'],
-	apiNodePath = '.locations.search';
+	apiNodeDecl = extend(true, {}, data.decl_1_normalized['.locations.search']),
+	apiNodePath = '.locations.search',
+	apiNode,
 	treeStub = {
 		splitPath: function () {
 			return ['.', '.locations', '.locations.search'];
@@ -11,8 +13,8 @@ var assert = require('assert'),
 			return this.nodes[nodePath];
 		},
 		nodes: {
-			'.locations': data.decl_1_normalized['.locations'],
-			'.': data.decl_1_normalized['.']
+			'.locations': extend(true, {}, data.decl_1_normalized['.locations']),
+			'.': extend(true, {}, data.decl_1_normalized['.'])
 		}
 	};
 
