@@ -2,7 +2,7 @@ var assert = require('assert'),
 	APITree = require('../lib/api-tree'),
 	data = require('./data'),
 	decl_1_normalized = data.decl_1_normalized,
-	tree, node, exportedEndpoint, request;
+	tree, node, exportedEndpoint, request, server;
 
 describe('APITree', function () {
 
@@ -77,16 +77,19 @@ describe('APITree', function () {
 
 	describe('#exportEndpoint()', function () {
 		// в queue поддержать проброс промисовых объектов
-		// подготовить локальный сервер для тестирования
+
+		before(function () {
+			var serverConfig = require('./server/config');
+			server = require('./server/server').listen(serverConfig.port);
+		});
+
+		after(function () {
+			server.close();
+		});
 
 		beforeEach(function () {
-			node = tree.getNode('.layer.handlerTwo');
-			// Добавить в tree и тестировать extend
-			node.options.data = {
-				client_id: '22aaafad8e8447cf883c2cbb55663de5'
-			};
+			node = tree.getNode('.layer.handlerOne');
 
-			node.options.url = 'https://api.instagram.com/v1/locations/1';
 			node.options.prefilter = undefined;
 			node.options.processResult = undefined;
 
@@ -113,15 +116,19 @@ describe('APITree', function () {
 		it('should accept options.prefilter function', function (done) {
 			var prefilterExecuted = false;
 
-			// spy
 			node.options.prefilter = function (options) {
-				options.url = 'https://api.instagram.com/v1/locations/3';
+				options.data.prefiltered = true;
+				assert.deepEqual(options.cascade, {
+					rootLevel: true,
+					layerLevel: true,
+					handlerLevel: true
+				});
 				prefilterExecuted = true;
 			};
 
-			exportedEndpoint()
+			exportedEndpoint({prefiltered: false})
 				.then(function (response) {
-					assert.equal(response.data.data.id, '3');
+					assert.equal(response.data.query.prefiltered, 'true');
 					assert.equal(prefilterExecuted, true);
 
 					done();
@@ -131,15 +138,17 @@ describe('APITree', function () {
 		it('should accept options.processResult function', function (done) {
 			var processExecuted = false;
 
-			// spy
 			node.options.processResult = function (response) {
 				processExecuted = true;
+				assert.ok(response.data);
+				assert.ok(response.request);
+
 				return response.data;
 			};
 
-			exportedEndpoint()
+			exportedEndpoint({code: 200})
 				.then(function (response) {
-					assert.equal(response.data.id, '1');
+					assert.deepEqual(response.query, { code: 200 });
 					assert.equal(processExecuted, true);
 
 					done();
@@ -147,9 +156,10 @@ describe('APITree', function () {
 		});
 
 		it('should exec promise.fail if executed with wrong params', function (done) {
-			exportedEndpoint({ client_id: '' /* fail: true для будущего сервера */ })
+			exportedEndpoint({ code: 404 })
 				.fail(function (response) {
-					assert.equal(response.status, 400);
+					assert.equal(response.status, 404);
+
 					done();
 				});
 		});
