@@ -164,6 +164,28 @@ describe('APITree', function () {
 				});
 		});
 
+		it('should execute callback on success before #then()', function (done) {
+			var callbackExecuted = false;
+
+			exportedEndpoint({}, function (response) {
+				callbackExecuted = true;
+			}).then(function () {
+				assert.equal(callbackExecuted, true);
+				done();
+			});
+		});
+
+		it('should execute callback on error before #fail()', function (done) {
+			var callbackExecuted = false;
+
+			exportedEndpoint({ code: 404 }, function (response) {
+				callbackExecuted = true;
+			}).fail(function () {
+				assert.equal(callbackExecuted, true);
+				done();
+			});
+		});
+
 		// it('should exec promise.fail if options.prefilter returns false', function () {});
 
 	});
