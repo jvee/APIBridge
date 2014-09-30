@@ -93,7 +93,7 @@ describe('APITree', function () {
 			node.options.prefilter = undefined;
 			node.options.processResult = undefined;
 
-			exportedEndpoint = tree.exportEndpoint(node);
+			exportedEndpoint = tree.exportEndpoint(node, {context: true});
 		});
 
 		it('should return function', function () {
@@ -123,6 +123,7 @@ describe('APITree', function () {
 					layerLevel: true,
 					handlerLevel: true
 				});
+				assert.equal(this.context, true);
 				prefilterExecuted = true;
 			};
 
@@ -142,6 +143,7 @@ describe('APITree', function () {
 				processExecuted = true;
 				assert.ok(response.data);
 				assert.ok(response.request);
+				assert.equal(this.context, true);
 
 				return response.data;
 			};
@@ -168,6 +170,7 @@ describe('APITree', function () {
 			var callbackExecuted = false;
 
 			exportedEndpoint({}, function (response) {
+				assert.equal(this.context, true);
 				callbackExecuted = true;
 			}).then(function () {
 				assert.equal(callbackExecuted, true);
@@ -179,6 +182,7 @@ describe('APITree', function () {
 			var callbackExecuted = false;
 
 			exportedEndpoint({ code: 404 }, function (response) {
+				assert.equal(this.context, true);
 				callbackExecuted = true;
 			}).fail(function () {
 				assert.equal(callbackExecuted, true);
