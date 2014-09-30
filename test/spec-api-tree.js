@@ -104,16 +104,14 @@ describe('APITree', function () {
 			assert.equal(typeof exportedEndpoint().then, 'function');
 		});
 
-		it('should create request', function (done) {
-			exportedEndpoint()
+		it('should create request', function () {
+			return exportedEndpoint()
 				.then(function (response) {
 					assert.equal(response.request.status, 200);
-
-					done();
 				});
 		});
 
-		it('should accept options.prefilter function', function (done) {
+		it('should accept options.prefilter function', function () {
 			var prefilterExecuted = false;
 
 			node.options.prefilter = function (options) {
@@ -127,16 +125,14 @@ describe('APITree', function () {
 				prefilterExecuted = true;
 			};
 
-			exportedEndpoint({prefiltered: false})
+			return exportedEndpoint({prefiltered: false})
 				.then(function (response) {
 					assert.equal(response.data.query.prefiltered, 'true');
 					assert.equal(prefilterExecuted, true);
-
-					done();
 				});
 		});
 
-		it('should accept options.processResult function', function (done) {
+		it('should accept options.processResult function', function () {
 			var processExecuted = false;
 
 			node.options.processResult = function (response) {
@@ -148,45 +144,39 @@ describe('APITree', function () {
 				return response.data;
 			};
 
-			exportedEndpoint({code: 200})
+			return exportedEndpoint({code: 200})
 				.then(function (response) {
 					assert.deepEqual(response.query, { code: 200 });
 					assert.equal(processExecuted, true);
-
-					done();
 				});
 		});
 
-		it('should exec promise.fail if executed with wrong params', function (done) {
-			exportedEndpoint({ code: 404 })
+		it('should exec promise.fail if executed with wrong params', function () {
+			return exportedEndpoint({ code: 404 })
 				.fail(function (response) {
 					assert.equal(response.status, 404);
-
-					done();
 				});
 		});
 
-		it('should execute callback on success before #then()', function (done) {
+		it('should execute callback on success before #then()', function () {
 			var callbackExecuted = false;
 
-			exportedEndpoint({}, function (response) {
+			return exportedEndpoint({}, function (response) {
 				assert.equal(this.context, true);
 				callbackExecuted = true;
 			}).then(function () {
 				assert.equal(callbackExecuted, true);
-				done();
 			});
 		});
 
-		it('should execute callback on error before #fail()', function (done) {
+		it('should execute callback on error before #fail()', function () {
 			var callbackExecuted = false;
 
-			exportedEndpoint({ code: 404 }, function (response) {
+			return exportedEndpoint({ code: 404 }, function (response) {
 				assert.equal(this.context, true);
 				callbackExecuted = true;
 			}).fail(function () {
 				assert.equal(callbackExecuted, true);
-				done();
 			});
 		});
 
