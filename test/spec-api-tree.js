@@ -93,7 +93,7 @@ describe('APITree', function () {
 			node.options.prefilter = undefined;
 			node.options.processResult = undefined;
 
-			exportedEndpoint = tree.exportEndpoint(node, {context: true});
+			exportedEndpoint = tree.exportEndpoint(node);
 		});
 
 		it('should return function', function () {
@@ -107,6 +107,7 @@ describe('APITree', function () {
 		it('should create request', function () {
 			return exportedEndpoint()
 				.then(function (response) {
+					// check response.options
 					assert.equal(response.request.status, 200);
 				});
 		});
@@ -121,7 +122,7 @@ describe('APITree', function () {
 					layerLevel: true,
 					handlerLevel: true
 				});
-				assert.equal(this.context, true);
+				// assert.equal(this.context, true);
 				prefilterExecuted = true;
 			};
 
@@ -139,7 +140,7 @@ describe('APITree', function () {
 				processExecuted = true;
 				assert.ok(response.data);
 				assert.ok(response.request);
-				assert.equal(this.context, true);
+				// assert.equal(this.context, true);
 
 				return response.data;
 			};
@@ -162,7 +163,7 @@ describe('APITree', function () {
 			var callbackExecuted = false;
 
 			return exportedEndpoint({}, function (response) {
-				assert.equal(this.context, true);
+				// assert.equal(this.context, true);
 				callbackExecuted = true;
 			}).then(function () {
 				assert.equal(callbackExecuted, true);
@@ -173,7 +174,7 @@ describe('APITree', function () {
 			var callbackExecuted = false;
 
 			return exportedEndpoint({ code: 404 }, function (response) {
-				assert.equal(this.context, true);
+				// assert.equal(this.context, true);
 				callbackExecuted = true;
 			}).fail(function () {
 				assert.equal(callbackExecuted, true);
