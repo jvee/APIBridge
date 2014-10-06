@@ -5,7 +5,6 @@ var assert = require('assert'),
 /**
  * @todo
  * Протестировать остальные методы Executor
- * Тесты для APITree#exportEndpoint()
  * в queue поддержать проброс промисовых объектов
  * в response передавать так же собранные options
  * протестировать массивы в proccessResult

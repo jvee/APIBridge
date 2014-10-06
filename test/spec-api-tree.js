@@ -2,7 +2,7 @@ var assert = require('assert'),
 	APITree = require('../lib/api-tree'),
 	data = require('./data'),
 	decl_1_normalized = data.decl_1_normalized,
-	tree, node, exportedEndpoint, request, server;
+	tree;
 
 describe('APITree', function () {
 
@@ -76,7 +76,11 @@ describe('APITree', function () {
 	});
 
 	describe('#exportEndpoint()', function () {
-
+		it('should return function', function () {
+			// @see Executor#exec for more details;
+			var node = tree.getNode('.layer.handlerOne');
+			assert.equal(typeof tree.exportEndpoint(node), 'function');
+		});
 	});
 
 });
