@@ -1,6 +1,5 @@
 var assert = require('assert'),
-	Executor = require('../lib/executor'),
-	executor = new Executor({context: true}, null, {});
+	Executor = require('../lib/executor');
 
 /**
  * @todo
@@ -14,6 +13,32 @@ var assert = require('assert'),
 
 
 describe('Executor', function () {
+
+	var executor;
+
+	before(function () {
+		executor = new Executor({context: true}, null, {});
+	});
+
+	describe('#processTransport()', function () {
+
+	});
+
+	describe('#addStageToQueue()', function () {
+
+	});
+
+	describe('#buildQueue()', function () {
+
+	});
+
+	describe('#addExtendRule()', function () {
+
+	});
+
+	describe('#smartExtend()', function () {
+
+	});
 
 	describe('#exec()', function () {
 
