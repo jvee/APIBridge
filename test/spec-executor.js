@@ -36,7 +36,32 @@ describe('Executor', function () {
 	});
 
 	describe('#addStageToQueue()', function () {
+		it('should add binded to options.ctx function with wired argument', function () {
+			var taskQueue = [],
+				stage = {
+					name: 'someStage',
+					argument: 'response'
 
+				},
+				wiredArgs = {
+					options: {
+						someStage: function (response) {
+							assert.deepEqual(this, {context: true});
+							assert.equal(response, wiredArgs.response);
+						},
+						ctx: {
+							context: true
+						}
+					},
+					response: {}
+				};
+
+			executor.addStageToQueue(taskQueue, stage, wiredArgs);
+
+			assert.equal(taskQueue.length, 1);
+
+			taskQueue[0]();
+		});
 	});
 
 	describe('#buildQueue()', function () {
