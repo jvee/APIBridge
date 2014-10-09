@@ -16,7 +16,7 @@ describe('Executor', function () {
 
 	var executor;
 
-	before(function () {
+	beforeEach(function () {
 		executor = new Executor({context: true}, null, {});
 	});
 
@@ -65,7 +65,36 @@ describe('Executor', function () {
 	});
 
 	describe('#buildQueue()', function () {
+		var taskQueue, options, response;
 
+		beforeEach(function () {
+			taskQueue = [];
+			options = {
+				prefilter: function () {},
+				processResult: function () {}
+			};
+			response = {};
+		});
+
+		it('should pass right arguments to #addStageToQueue()', function () {
+			executor.addStageToQueue = function (passedTaskQueue, passedStage, passedWiredArgs) {
+				assert.equal(passedTaskQueue, taskQueue);
+				assert.ok(executor.stages.indexOf(passedStage) >= 0);
+				assert.equal(passedWiredArgs.options, options);
+				assert.equal(passedWiredArgs.response, response);
+			};
+
+			executor.buildQueue(taskQueue, options, response);
+		});
+
+		it('should push functions to task queue array and return it', function () {
+			var result = executor.buildQueue(taskQueue, options, response);
+
+			assert.equal(result, taskQueue);
+			assert.equal(taskQueue.length, 2);
+			assert.notEqual(taskQueue[0], options.prefilter);
+			assert.notEqual(taskQueue[1], options.precessResult);
+		});
 	});
 
 	describe('#addExtendRule()', function () {
