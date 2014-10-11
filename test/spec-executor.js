@@ -97,10 +97,6 @@ describe('Executor', function () {
 		});
 	});
 
-	describe('#addExtendRule()', function () {
-
-	});
-
 	describe('#smartExtend()', function () {
 		it('should deeply extend array of objects, passed as argument', function () {
 			var obj1 = {param: {value: false}, some: true},
