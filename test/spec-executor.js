@@ -36,31 +36,48 @@ describe('Executor', function () {
 	});
 
 	describe('#addStageToQueue()', function () {
-		it('should add binded to options.ctx function with wired argument', function () {
-			var taskQueue = [],
-				stage = {
-					name: 'someStage',
-					argument: 'response'
+		var taskQueue = [],
+			stage = {
+				name: 'someStage',
+				argument: 'response'
 
+			},
+			stage2 = {
+				name: 'anotherStage',
+				argument: 'response'
+			},
+			wiredArgs = {
+				options: {
+					someStage: testFunc,
+					anotherStage: [ testFunc, testFunc ],
+					ctx: {
+						context: true
+					}
 				},
-				wiredArgs = {
-					options: {
-						someStage: function (response) {
-							assert.deepEqual(this, {context: true});
-							assert.equal(response, wiredArgs.response);
-						},
-						ctx: {
-							context: true
-						}
-					},
-					response: {}
-				};
+				response: {}
+			};
 
+		function testFunc(response) {
+			assert.deepEqual(this, {context: true});
+			assert.equal(response, wiredArgs.response);
+		}
+
+		it('should add binded to options.ctx function with wired argument', function () {
 			executor.addStageToQueue(taskQueue, stage, wiredArgs);
 
 			assert.equal(taskQueue.length, 1);
 
 			taskQueue[0]();
+
+		});
+
+		it('should accept array of functions passed as options.stageName', function () {
+			executor.addStageToQueue(taskQueue, stage2, wiredArgs);
+
+			assert.equal(taskQueue.length, 3);
+
+			taskQueue[1]();
+			taskQueue[2]();
 		});
 	});
 
