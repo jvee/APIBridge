@@ -20,21 +20,6 @@ describe('Executor', function () {
 		executor = new Executor({context: true}, null, {});
 	});
 
-	describe('#processTransport()', function () {
-
-		it('should extend passed firts argument object with second and return link to first', function () {
-			var responseObj = {},
-				requestObj = { value: true },
-				result;
-
-			result = executor.processTransport(responseObj, requestObj);
-
-			assert.deepEqual(responseObj, { value: true });
-			assert.equal(result, responseObj);
-		});
-
-	});
-
 	describe('#addStageToQueue()', function () {
 		var taskQueue = [],
 			stage = {
@@ -112,6 +97,7 @@ describe('Executor', function () {
 				processResult: function () {}
 			};
 			response = {};
+			executor.innerScope.processTransport = undefined;
 		});
 
 		it('should pass right arguments to #addStageToQueue()', function () {
