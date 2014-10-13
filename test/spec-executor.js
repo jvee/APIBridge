@@ -79,6 +79,27 @@ describe('Executor', function () {
 			taskQueue[1]();
 			taskQueue[2]();
 		});
+
+		it('Should accept array of functions passed as executorInstance#innerScope.stageName', function () {
+			var stage3 = {
+					name: 'innerStage',
+					argument: 'response',
+					isInnerScope: true
+				};
+
+			executor.innerScope.ctx = { context: true };
+
+			executor.innerScope['innerStage'] = [function (response) {
+				assert.equal(response, wiredArgs.response);
+				assert.equal(this, executor.innerScope.ctx);
+			}];
+
+			executor.addStageToQueue(taskQueue, stage3, wiredArgs);
+
+			assert.equal(taskQueue.length, 4);
+
+			taskQueue[3]();
+		});
 	});
 
 	describe('#buildQueue()', function () {
