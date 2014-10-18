@@ -154,11 +154,7 @@ describe('Executor', function () {
 	describe('#exec()', function () {
 
 		var serverConfig = require('./server/config'),
-			server, execRun, optionsChain, inc;
-
-		function incUp(x) {
-			inc += x.toString();
-		}
+			server, execRun, optionsChain;
 
 		before(function () {
 			server = require('./server/server').listen(serverConfig.port);
@@ -277,69 +273,6 @@ describe('Executor', function () {
 			}).fail(function () {
 				assert.equal(callbackExecuted, true);
 			});
-		});
-
-		it('should apply exend rules for options[prefilter|processResult]', function () {
-			function run(param) {
-				inc = '';
-
-				optionsChain[0][param] = [incUp.bind(null, 1), incUp.bind(null, 2)];
-				optionsChain[1][param] = [incUp.bind(null, 3)];
-				optionsChain[2][param] = incUp.bind(null, 4);
-
-				return execRun()
-					.then(function () {
-						optionsChain[0][param] = undefined;
-						optionsChain[1][param] = undefined;
-						optionsChain[2][param] = undefined;
-
-						assert.equal(inc, '1234');
-					});
-			}
-
-			return run('prefilter').then(run.bind(null, 'processResult'));
-		});
-
-		it('should apply extend rules for options[prefilter|processResult] after "null" in optionsChain', function () {
-			function run(param) {
-				inc = '';
-
-				optionsChain[0].prefilter = [incUp.bind(null, 1), incUp.bind(null, 2)];
-				optionsChain[1].prefilter = null;
-				optionsChain[2].prefilter = incUp.bind(null, 3);
-
-				return execRun()
-					.then(function () {
-						optionsChain[0][param] = undefined;
-						optionsChain[1][param] = undefined;
-						optionsChain[2][param] = undefined;
-
-						assert.equal(inc, '3');
-					});
-			}
-
-			return run('prefilter').then(run.bind(null, 'processResult'));
-		});
-
-		it('should apply extend rules for options[prefilter|processResult] after "null" in array in optionsChain"', function () {
-			function run(param) {
-				inc = '';
-
-				optionsChain[0].prefilter = [incUp.bind(null, 1), incUp.bind(null, 2)];
-				optionsChain[1].prefilter = [null, incUp.bind(null, 3)];
-				optionsChain[2].prefilter = incUp.bind(null, 4);
-
-				return execRun()
-					.then(function () {
-						optionsChain[0][param] = undefined;
-						optionsChain[1][param] = undefined;
-						optionsChain[2][param] = undefined;
-
-						assert.equal(inc, '34');
-					});
-			}
-
-			return run('prefilter').then(run.bind(null, 'processResult'));
 		});
 
 		// it('should exec promise.fail if options.prefilter returns false', function () {});
