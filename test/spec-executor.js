@@ -5,7 +5,6 @@ var assert = require('assert'),
  * @todo
  * Протестировать остальные методы Executor
  * в queue поддержать проброс промисовых объектов
- * в response передавать так же собранные options
  * протестировать массивы в proccessResult
  * Тестировать optionsCascade в другом месте,
  * Протестировать инициализацию модуля
@@ -31,20 +30,23 @@ describe('Executor', function () {
 				name: 'anotherStage',
 				argument: 'response'
 			},
-			wiredArgs = {
-				options: {
+			wiredArgs = [
+				//options
+				{
 					someStage: testFunc,
 					anotherStage: [ testFunc, testFunc ],
 					ctx: {
 						context: true
 					}
 				},
-				response: {}
-			};
+				// response
+				{}
+			];
 
-		function testFunc(response) {
+		function testFunc(options, response) {
 			assert.deepEqual(this, {context: true});
-			assert.equal(response, wiredArgs.response);
+			assert.equal(options, wiredArgs[0]);
+			assert.equal(response, wiredArgs[1]);
 		}
 
 		it('should add binded to options.ctx function with wired argument', function () {
@@ -74,8 +76,9 @@ describe('Executor', function () {
 
 			executor.innerScope.ctx = { context: true };
 
-			executor.innerScope['innerStage'] = [function (response) {
-				assert.equal(response, wiredArgs.response);
+			executor.innerScope['innerStage'] = [function (options, response) {
+				assert.equal(options, wiredArgs[0]);
+				assert.equal(response, wiredArgs[1]);
 				assert.equal(this, executor.innerScope.ctx);
 			}];
 
@@ -104,15 +107,15 @@ describe('Executor', function () {
 			executor.addStageToQueue = function (passedTaskQueue, passedStage, passedWiredArgs) {
 				assert.equal(passedTaskQueue, taskQueue);
 				assert.ok(executor.stages.indexOf(passedStage) >= 0);
-				assert.equal(passedWiredArgs.options, options);
-				assert.equal(passedWiredArgs.response, response);
+				assert.equal(passedWiredArgs[0], options);
+				assert.equal(passedWiredArgs[1], response);
 			};
 
-			executor.buildQueue(taskQueue, options, response);
+			executor.buildQueue(taskQueue, [options, response]);
 		});
 
 		it('should push functions to task queue array and return it', function () {
-			var result = executor.buildQueue(taskQueue, options, response);
+			var result = executor.buildQueue(taskQueue, [options, response]);
 
 			assert.equal(result, taskQueue);
 			assert.equal(taskQueue.length, 2);
@@ -199,7 +202,6 @@ describe('Executor', function () {
 		it('should create request', function () {
 			return execRun()
 				.then(function (response) {
-					// check response.options
 					assert.equal(response.request.status, 200);
 				});
 		});
@@ -208,7 +210,7 @@ describe('Executor', function () {
 			var prefilterExecuted = false,
 				options = {};
 
-			options.prefilter = function (options) {
+			options.prefilter = function (options, response) {
 				options.data.prefiltered = true;
 				assert.deepEqual(options.cascade, {
 					rootLevel: true,
@@ -230,7 +232,7 @@ describe('Executor', function () {
 			var processExecuted = false,
 				options = {};
 
-			options.processResult = function (response) {
+			options.processResult = function (options, response) {
 				processExecuted = true;
 				assert.ok(response.data);
 				assert.ok(response.request);
