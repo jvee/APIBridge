@@ -19,6 +19,27 @@ describe('Executor', function () {
 		executor = new Executor({context: true}, null, {});
 	});
 
+	describe('#createTask()', function () {
+
+		it('should retunr function', function () {
+			assert.equal(typeof executor.createTask(), 'function');
+		});
+
+		it('should retunr function, bound to passed contenxt and array of arguments', function () {
+
+			var argArr = [[], {}],
+				context = {},
+				task = executor.createTask(function (arg1, arg2) {
+					assert.equal(this, context);
+					assert.equal(arg1, argArr[0]);
+					assert.equal(arg2, argArr[1]);
+				}, context, argArr);
+
+			task();
+		});
+
+	});
+
 	describe('#addStageToQueue()', function () {
 		var taskQueue = [],
 			stage = {
