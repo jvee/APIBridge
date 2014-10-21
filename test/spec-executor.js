@@ -139,7 +139,7 @@ describe('Executor', function () {
 			var result = executor.buildQueue(taskQueue, [options, response]);
 
 			assert.equal(result, taskQueue);
-			assert.equal(taskQueue.length, 2);
+			assert.equal(taskQueue.length, 3); // тут еще transport из innerScope, нужно избавиться
 			assert.notEqual(taskQueue[0], options.prefilter);
 			assert.notEqual(taskQueue[1], options.precessResult);
 		});
