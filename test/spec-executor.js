@@ -1,5 +1,6 @@
 var assert = require('assert'),
-	Executor = require('../lib/executor');
+	Executor = require('../lib/executor'),
+	H = require('../lib/helpers');
 
 /**
  * @todo
@@ -173,6 +174,33 @@ describe('Executor', function () {
 			assert.deepEqual(result, {param: {value: true}, some: false, newParam: 'passed'});
 		});
 
+	});
+
+	describe('#queue()', function () {
+		it('should build promised chain', function (done) {
+			var testFunc1 = function (tstObject) {
+				tstObject.some = 'some';
+			};
+
+			var testFunc2  = function () {
+				var defer = new H.Deferred();
+				defer.resolve(5);
+				return defer.promise;
+			};
+
+			var testObject = {};
+
+			var q = executor.queue(testFunc1.bind(null, testObject), testFunc2);
+
+			assert.ok(q.then);
+
+			q.then(function (value) {
+				assert.equal(value, 5);
+				assert.equal(testObject.some, 'some');
+				done();
+			});
+
+		});
 	});
 
 	describe('#exec()', function () {
