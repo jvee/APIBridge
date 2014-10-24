@@ -43,15 +43,8 @@ describe('Executor', function () {
 
 	describe('#addStageToQueue()', function () {
 		var taskQueue = [],
-			stage = {
-				name: 'someStage',
-				argument: 'response'
-
-			},
-			stage2 = {
-				name: 'anotherStage',
-				argument: 'response'
-			},
+			stage = 'someStage',
+			stage2 = 'anotherStage',
 			wiredArgs = [
 				//options
 				{
@@ -90,15 +83,11 @@ describe('Executor', function () {
 		});
 
 		it('Should accept array of functions passed as executorInstance#innerScope.stageName', function () {
-			var stage3 = {
-					name: 'innerStage',
-					argument: 'response',
-					isInnerScope: true
-				};
+			var stage3 = '_innerStage';
 
 			executor.innerScope.ctx = { context: true };
 
-			executor.innerScope['innerStage'] = [function (options, response) {
+			executor.innerScope['_innerStage'] = [function (options, response) {
 				assert.equal(options, wiredArgs[0]);
 				assert.equal(response, wiredArgs[1]);
 				assert.equal(this, executor.innerScope.ctx);
