@@ -82,15 +82,15 @@ describe('Executor', function () {
 			taskQueue[2]();
 		});
 
-		it('Should accept array of functions passed as executorInstance#innerScope.stageName', function () {
-			var stage3 = '_innerStage';
+		it('Should accept array of functions passed as executorInstance#_scope.stageName', function () {
+			var stage3 = '_stage';
 
-			executor.innerScope.ctx = { context: true };
+			executor._scope.ctx = { context: true };
 
-			executor.innerScope['_innerStage'] = [function (options, response) {
+			executor._scope['_stage'] = [function (options, response) {
 				assert.equal(options, wiredArgs[0]);
 				assert.equal(response, wiredArgs[1]);
-				assert.equal(this, executor.innerScope.ctx);
+				assert.equal(this, executor._scope.ctx);
 			}];
 
 			executor.addStageToQueue(taskQueue, stage3, wiredArgs);
@@ -111,7 +111,7 @@ describe('Executor', function () {
 				processResult: function () {}
 			};
 			response = {};
-			executor.innerScope.processTransport = undefined;
+			executor._scope.processTransport = undefined;
 		});
 
 		it('should pass right arguments to #addStageToQueue()', function () {
@@ -129,7 +129,7 @@ describe('Executor', function () {
 			var result = executor.buildQueue(taskQueue, [options, response]);
 
 			assert.equal(result, taskQueue);
-			assert.equal(taskQueue.length, 3); // тут еще transport из innerScope, нужно избавиться
+			assert.equal(taskQueue.length, 3); // тут еще transport из _scope, нужно избавиться
 			assert.notEqual(taskQueue[0], options.prefilter);
 			assert.notEqual(taskQueue[1], options.precessResult);
 		});
