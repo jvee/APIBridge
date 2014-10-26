@@ -27,6 +27,22 @@ describe('APITree', function () {
 		});
 	});
 
+	describe('#fetchNodes', function () {
+		it('should return nodes object with undeclared nodes', function () {
+
+			var apiDecl = {
+				'.layer.sublayer.handler': {}
+			};
+
+			var result = tree.fetchNodes(apiDecl);
+
+			assert.ok(result['.']);
+			assert.ok(result['.layer']);
+			assert.ok(result['.layer.sublayer']);
+			assert.ok(result['.layer.sublayer.handler']);
+		});
+	});
+
 	describe('#getNode()', function () {
 		it('should correctly return requested node', function () {
 			assert.equal(tree.getNode('.layer').name , 'layer');
