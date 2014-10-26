@@ -47,7 +47,7 @@ describe('APITree', function () {
 		it('should correctly return requested node', function () {
 			assert.equal(tree.getNode('.layer').name , 'layer');
 			assert.equal(tree.getNode('.layer.handlerOne').name, 'handlerOne');
-			assert.equal(tree.getNode('.').name, 'TestAPI');
+			assert.equal(tree.getNode('.').name, '');
 		});
 
 		it('should return "undefined" with wrong arguments', function () {

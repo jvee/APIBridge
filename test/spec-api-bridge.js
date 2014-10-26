@@ -17,19 +17,11 @@ describe('apiBridge integration test', function () {
 
 	beforeEach(function () {
 		apiDecl = {
-			'.': {
-				name: 'TestAPI',
-				nodeType: 'root'
-			},
+			'.': {},
 
-			'.layer': {
-				name: 'layer',
-				nodeType: 'models'
-			},
+			'.layer': {},
 
 			'.layer.handlerOne': {
-				name: 'handlerOne',
-				nodeType: 'endpoints',
 				url: testHost + 'layer/handlerOne'
 			}
 		};

@@ -21,21 +21,26 @@ var assert = require('assert'),
 describe('APINode', function () {
 
 	beforeEach(function () {
-		apiNode = new APINode(apiNodeDecl, apiNodePath, treeStub);
+		apiNode = new APINode({
+			pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
+			tree: treeStub,
+			nodeType: 'handler',
+			options: apiNodeDecl
+		});
 	});
 
 	it('should construct object', function () {
 		assert.equal(apiNode.name, 'handlerOne');
-		assert.equal(apiNode.nodeType, 'endpoints');
+		assert.equal(apiNode.nodeType, 'handler');
 		assert.equal(apiNode.path, '.layer.handlerOne');
 		assert.deepEqual(apiNode.parents, ['.', '.layer']);
 	});
 
-	describe('APINode#copyOptions()', function () {
-		it('should copy declared options and ignore some from defaults', function () {
-			assert.equal(apiNode.options.name, undefined);
-			assert.equal(apiNode.options.nodeType, undefined);
-			assert.equal(apiNode.options.url, data.testHost + 'layer/handlerOne');
+	describe('APINode#getNameFromPath()', function () {
+		it('should parse nodePath and return it\'s name', function () {
+			assert.equal(apiNode.getNameFromPath('.layer.handler'), 'handler');
+			assert.equal(apiNode.getNameFromPath('.layer'), 'layer');
+			assert.equal(apiNode.getNameFromPath('.'), '');
 		});
 	});
 
