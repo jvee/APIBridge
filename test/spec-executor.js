@@ -17,7 +17,8 @@ describe('Executor', function () {
 	var executor;
 
 	beforeEach(function () {
-		executor = new Executor({context: true}, null, {});
+		executor = new Executor();
+		executor.ctx = {context: true};
 	});
 
 	describe('#createTask()', function () {
