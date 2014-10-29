@@ -17,7 +17,17 @@ describe('Executor', function () {
 	var executor;
 
 	beforeEach(function () {
-		executor = new Executor();
+		executor = new Executor({
+			stages: [
+				'prefilter',
+				'transport',
+				'_transport',
+				'processResult'
+			],
+			_scope: {
+				_transport: H.transport
+			}
+		});
 		executor.ctx = {context: true};
 	});
 
