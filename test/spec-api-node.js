@@ -29,11 +29,37 @@ describe('APINode', function () {
 		});
 	});
 
-	it('should construct object', function () {
-		assert.equal(apiNode.name, 'handlerOne');
-		assert.equal(apiNode.nodeType, 'handler');
-		assert.equal(apiNode.path, '.layer.handlerOne');
-		assert.deepEqual(apiNode.parents, ['.', '.layer']);
+	describe('initialize', function () {
+		it('should construct object', function () {
+			assert.equal(apiNode.name, 'handlerOne');
+			assert.equal(apiNode.nodeType, 'handler');
+			assert.equal(apiNode.path, '.layer.handlerOne');
+			assert.deepEqual(apiNode.parents, ['.', '.layer']);
+		});
+
+		it('should accept string as options and convert it to options.url', function () {
+			apiNode = new APINode({
+				pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
+				tree: treeStub,
+				nodeType: 'handler',
+				options: 'passed/url'
+			});
+
+			assert.equal(apiNode.options.url, 'passed/url');
+		});
+
+		it('should accept function as options and convert it to options.transport', function () {
+			var testTransport = function () {};
+
+			apiNode = new APINode({
+				pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
+				tree: treeStub,
+				nodeType: 'handler',
+				options: testTransport
+			});
+
+			assert.equal(apiNode.options.transport, testTransport);
+		});
 	});
 
 	describe('APINode#getNameFromPath()', function () {

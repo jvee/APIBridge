@@ -51,6 +51,13 @@ describe('apiBridge integration test', function () {
 				cascade: {
 					handlerLevel: true
 				}
+			},
+
+			'.layer.handlerTwo': testHost + 'layer/handlerTwo',
+
+			'.layer.handlerThree': function (options, response) {
+				response.data = { functionExecuted: true };
+				response.request = {};
 			}
 		};
 
@@ -98,6 +105,21 @@ describe('apiBridge integration test', function () {
 					assert.equal(callbackExecuted, true);
 					// не сохранена структура response при then и fail
 					assert.equal(response.status, 404);
+				});
+		});
+
+		it('should exec node with string passed as options', function () {
+			return api.layer.handlerTwo({}, {cascade:{handlerLevel: true}})
+				.then(function (response) {
+					assert.equal(response.data.path, '/layer/handlerTwo');
+				});
+		});
+
+		it('should exec node with function passed as options', function () {
+			return api.layer.handlerThree({}, {cascade:{handlerLevel: true}})
+				.then(function (response) {
+					console.log(response);
+					assert.ok(response.data.functionExecuted);
 				});
 		});
 
