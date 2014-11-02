@@ -127,23 +127,16 @@ describe('Executor', function () {
 
 		it('should pass right arguments to #addStageToQueue()', function () {
 			executor.addStageToQueue = function (passedTaskQueue, passedStage, passedWiredArgs) {
-				assert.equal(passedTaskQueue, taskQueue);
 				assert.ok(executor.stages.indexOf(passedStage) >= 0);
 				assert.equal(passedWiredArgs[0], options);
 				assert.equal(passedWiredArgs[1], response);
 			};
 
-			executor.buildQueue(taskQueue, [options, response]);
+			var execution = executor.buildQueue([options, response]);
+
+			assert.equal(typeof execution.then, 'function');
 		});
 
-		it('should push functions to task queue array and return it', function () {
-			var result = executor.buildQueue(taskQueue, [options, response]);
-
-			assert.equal(result, taskQueue);
-			assert.equal(taskQueue.length, 3); // тут еще transport из _scope, нужно избавиться
-			assert.notEqual(taskQueue[0], options.prefilter);
-			assert.notEqual(taskQueue[1], options.precessResult);
-		});
 	});
 
 	describe('#smartExtend()', function () {
