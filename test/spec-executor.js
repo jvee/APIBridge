@@ -50,6 +50,21 @@ describe('Executor', function () {
 			task();
 		});
 
+		it('should throw error with passed rejected deferred', function () {
+
+			var deferred = H.Deferred(),
+				promise = H.returnPromise(deferred),
+				argArr = [[], {}, deferred],
+				context = {},
+				task = executor.createTask(function () {}, context, argArr);
+
+
+			deferred.reject();
+
+			assert.throws(task);
+
+		});
+
 	});
 
 	describe('#addStageToQueue()', function () {
