@@ -2,16 +2,6 @@ var assert = require('assert'),
 	Executor = require('../lib/executor'),
 	H = require('../lib/helpers');
 
-/**
- * @todo
- * Протестировать остальные методы Executor
- * в queue поддержать проброс промисовых объектов
- * протестировать массивы в proccessResult
- * Тестировать optionsCascade в другом месте,
- * Протестировать инициализацию модуля
- */
-
-
 describe('Executor', function () {
 
 	var executor;
@@ -32,37 +22,32 @@ describe('Executor', function () {
 	});
 
 	describe('#createTask()', function () {
+		var deferred = H.Deferred(),
+			wiredArgs = [[], {}, deferred],
+			context = {},
+			task;
+
 
 		it('should retunr function', function () {
 			assert.equal(typeof executor.createTask(), 'function');
 		});
 
-		it('should retunr function, bound to passed contenxt and array of arguments', function () {
-
-			var argArr = [[], {}],
-				context = {},
-				task = executor.createTask(function (arg1, arg2) {
-					assert.equal(this, context);
-					assert.equal(arg1, argArr[0]);
-					assert.equal(arg2, argArr[1]);
-				}, context, argArr);
+		it('should return function, bound to passed contenxt and array of arguments', function () {
+			task = executor.createTask(function (arg1, arg2) {
+				assert.equal(this, context);
+				assert.equal(arg1, wiredArgs[0]);
+				assert.equal(arg2, wiredArgs[1]);
+			}, context, wiredArgs);
 
 			task();
 		});
 
 		it('should throw error with passed rejected deferred', function () {
-
-			var deferred = H.Deferred(),
-				promise = H.returnPromise(deferred),
-				argArr = [[], {}, deferred],
-				context = {},
-				task = executor.createTask(function () {}, context, argArr);
-
+			task = executor.createTask(function () {}, context, wiredArgs);
 
 			deferred.reject();
 
 			assert.throws(task);
-
 		});
 
 	});
@@ -128,28 +113,50 @@ describe('Executor', function () {
 	});
 
 	describe('#buildQueue()', function () {
-		var taskQueue, options, response;
+		var options, response, deferred, execution;
 
 		beforeEach(function () {
-			taskQueue = [];
 			options = {
 				prefilter: function () {},
 				processResult: function () {}
 			};
 			response = {};
+			deferred = H.Deferred();
+
+			
 			executor._scope.processTransport = undefined;
 		});
 
 		it('should pass right arguments to #addStageToQueue()', function () {
 			executor.addStageToQueue = function (passedTaskQueue, passedStage, passedWiredArgs) {
+				assert.equal(Object.prototype.toString.call(passedTaskQueue), '[object Array]');
 				assert.ok(executor.stages.indexOf(passedStage) >= 0);
 				assert.equal(passedWiredArgs[0], options);
 				assert.equal(passedWiredArgs[1], response);
 			};
 
-			var execution = executor.buildQueue([options, response]);
+			execution = executor.buildQueue([options, response, deferred]);
 
 			assert.equal(typeof execution.then, 'function');
+		});
+
+		it('should stop execution if deferred rejected', function () {
+			options.prefilter = function (options, response, deferred) {
+				response.prefilterExecuted = true;
+				deferred.reject();
+			};
+
+			options.processResult = function (options, response, deferred) {
+				response.processResultExecuted = true;
+			};
+
+			execution = executor.buildQueue([options, response, deferred]);
+
+			return execution.fail(function (error) {
+				assert.ok(response.prefilterExecuted);
+				assert.ok(!response.processResultExecuted);
+				assert.ok(error instanceof Error);
+			});
 		});
 
 	});
