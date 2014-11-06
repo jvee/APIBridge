@@ -10,23 +10,20 @@ describe('Executor', function () {
 		executor = new Executor({
 			stages: [
 				'prefilter',
-				'transport',
-				'_transport',
 				'processResult'
-			],
-			_scope: {
-				_transport: H.transport
-			}
+			]
 		});
 		executor.ctx = {context: true};
 	});
 
 	describe('#createTask()', function () {
-		var deferred = H.Deferred(),
-			wiredArgs = [[], {}, deferred],
-			context = {},
-			task;
+		var deferred, wiredArgs, context, task;
 
+		beforeEach(function () {
+			deferred = H.Deferred();
+			wiredArgs = [[], {}, deferred];
+			context = {};
+		});
 
 		it('should retunr function', function () {
 			assert.equal(typeof executor.createTask(), 'function');
@@ -48,6 +45,19 @@ describe('Executor', function () {
 			deferred.reject();
 
 			assert.throws(task);
+		});
+
+		it('should trigger deferred.notify', function (done) {
+			task = executor.createTask(function testTask() {}, context, wiredArgs, 'testStage');
+
+			H.returnPromise(deferred).progress(function (progress) {
+				assert.equal(progress.stage, 'testStage');
+				assert.equal(progress.task, 'testTask');
+				assert.equal(progress.response, wiredArgs[1]);
+				done();
+			});
+
+			task();
 		});
 
 	});
@@ -117,14 +127,16 @@ describe('Executor', function () {
 
 		beforeEach(function () {
 			options = {
-				prefilter: function () {},
-				processResult: function () {}
+				prefilter: [function prefilterTest(options, response, deferred) {
+					response.prefilterExecuted = true;
+				}] ,
+				processResult: [function processResultTest(options, response, deferred) {
+					response.processResultExecuted = true;
+					return response;
+				}]
 			};
 			response = {};
 			deferred = H.Deferred();
-
-			
-			executor._scope.processTransport = undefined;
 		});
 
 		it('should pass right arguments to #addStageToQueue()', function () {
@@ -141,14 +153,9 @@ describe('Executor', function () {
 		});
 
 		it('should stop execution if deferred rejected', function () {
-			options.prefilter = function (options, response, deferred) {
-				response.prefilterExecuted = true;
+			options.prefilter.push(function (options, response, deferred) {
 				deferred.reject();
-			};
-
-			options.processResult = function (options, response, deferred) {
-				response.processResultExecuted = true;
-			};
+			});
 
 			execution = executor.buildQueue([options, response, deferred]);
 
@@ -156,7 +163,29 @@ describe('Executor', function () {
 				assert.ok(response.prefilterExecuted);
 				assert.ok(!response.processResultExecuted);
 				assert.ok(error instanceof Error);
+				assert.equal(error.message, 'stopped');
 			});
+		});
+
+		it('should init deferred.progress() before each task', function () {
+			var taskNames = ['prefilterTest', 'processResultTest'];
+				stageNames = ['prefilter', 'processResult'];
+				progressInitCount = 0;
+
+			execution = executor.buildQueue([options, response, deferred]);
+
+			H.returnPromise(deferred).progress(function(progress) {
+				assert.ok(taskNames.indexOf(progress.task) > -1);
+				assert.ok(stageNames.indexOf(progress.stage) > -1);
+				progressInitCount++;
+			});
+
+			return execution.then(function (response) {
+					assert.equal(progressInitCount, 2);
+					assert.ok(response.prefilterExecuted);
+					assert.ok(response.processResultExecuted);
+				});
+
 		});
 
 	});
