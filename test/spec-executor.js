@@ -193,11 +193,12 @@ describe('Executor', function () {
 	describe('#smartExtend()', function () {
 		var obj1 = {param: {value: false}, some: true},
 			obj2 = {param: {value: true }},
+			obj3 = {additional: true},
 			result;
 
 		it('should deeply extend array of objects, passed as argument', function () {
-			result = executor.smartExtend([obj1, obj2]);
-			assert.deepEqual(result, {param: {value: true}, some: true});
+			result = executor.smartExtend([obj1, obj2], obj3);
+			assert.deepEqual(result, {param: {value: true}, some: true, additional: true});
 			assert.deepEqual(obj1, {param: {value: false}, some: true});
 			assert.deepEqual(obj2, {param: {value: true}});
 		});
