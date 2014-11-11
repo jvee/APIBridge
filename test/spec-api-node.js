@@ -116,4 +116,61 @@ describe('APINode', function () {
 		});
 	});
 
+	describe('APINode#setOptions()', function () {
+		beforeEach(function () {
+			apiNode.options = {};
+			apiNode.options.initValue = true;
+		});
+
+		it('should accept one object argument and replace whole options object', function () {
+			apiNode.setOptions({ some: true });
+
+			assert.deepEqual(apiNode.options, {
+				some: true
+			});
+
+			apiNode.setOptions('not object');
+
+			assert.deepEqual(apiNode.options, {
+				some: true
+			});
+		});
+
+		it('should accept new options object and deep flag for extending original object', function () {
+			apiNode.setOptions({some: true}, true);
+
+			assert.deepEqual(apiNode.options, {
+				some: true,
+				initValue: true
+			});
+		});
+
+		it('should accept one string argument and delete options.param', function () {
+			apiNode.setOptions('initValue');
+
+			assert.deepEqual(apiNode.options, {});
+		});
+
+		it('should accept two arguments', function () {
+
+			apiNode.setOptions('initValue', 'new value');
+
+			assert.deepEqual(apiNode.options, {
+				initValue: 'new value'
+			});
+
+			apiNode.setOptions('initValue', {
+				nested: true
+			});
+
+			assert.deepEqual(apiNode.options, {
+				initValue: {
+					nested: true
+				}
+			});
+
+		});
+
+	});
+
 });
