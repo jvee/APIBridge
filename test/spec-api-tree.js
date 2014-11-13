@@ -99,4 +99,39 @@ describe('APITree', function () {
 		});
 	});
 
+	describe('#setOption()', function () {
+		it('should set root node options', function () {
+			tree.setOption('some', true);
+
+			assert.equal(tree.getNode('.').options.some, true);
+
+			tree.setOption('some');
+
+			assert.equal(tree.getNode('.').options.some, undefined);
+		});
+
+		it('should set options for specified node', function () {
+			tree.setOption('.layer', 'some', true);
+
+			assert.equal(tree.getNode('.layer').options.some, true);
+
+			tree.setOption('.layer', 'some');
+
+			assert.equal(tree.getNode('.layer').options.some, undefined);
+		});
+	});
+
+
+	describe('#getOption', function () {
+		it('should return option from root node', function () {
+			assert.deepEqual(tree.getOption('cascade'), {rootLevel: true});
+			assert.deepEqual(tree.getOption().cascade, {rootLevel: true});
+		});
+
+		it('should return option from specified node', function () {
+			assert.deepEqual(tree.getOption('.layer','cascade'), {layerLevel: true});
+			assert.deepEqual(tree.getOption('.layer').cascade, {layerLevel: true});
+		});
+	});
+
 });
