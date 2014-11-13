@@ -116,59 +116,45 @@ describe('APINode', function () {
 		});
 	});
 
-	describe('APINode#setOptions()', function () {
+	describe('APINode#setOption()', function () {
 		beforeEach(function () {
-			apiNode.options = {};
-			apiNode.options.initValue = true;
+			apiNode.options = {initValue: true};
 		});
 
-		it('should accept one object argument and replace whole options object', function () {
-			apiNode.setOptions({ some: true });
+		it('should set options with a given value', function () {
+			apiNode.setOption('initValue', false);
+
+			assert.deepEqual(apiNode.options, {initValue: false});
+
+			apiNode.setOption('nested', {value: true});
 
 			assert.deepEqual(apiNode.options, {
-				some: true
+				initValue: false,
+				nested: {value: true}
 			});
 
-			apiNode.setOptions('not object');
+			apiNode.setOption('nested', {replace: true});
 
 			assert.deepEqual(apiNode.options, {
-				some: true
+				initValue: false,
+				nested: {replace: true}
 			});
-		});
 
-		it('should accept new options object and deep flag for extending original object', function () {
-			apiNode.setOptions({some: true}, true);
+			apiNode.setOption('nested', {value: true}, true);
 
 			assert.deepEqual(apiNode.options, {
-				some: true,
-				initValue: true
+				initValue: false,
+				nested: {
+					replace: true,
+					value: true
+				}
 			});
 		});
 
 		it('should accept one string argument and delete options.param', function () {
-			apiNode.setOptions('initValue');
+			apiNode.setOption('initValue');
 
 			assert.deepEqual(apiNode.options, {});
-		});
-
-		it('should accept two arguments', function () {
-
-			apiNode.setOptions('initValue', 'new value');
-
-			assert.deepEqual(apiNode.options, {
-				initValue: 'new value'
-			});
-
-			apiNode.setOptions('initValue', {
-				nested: true
-			});
-
-			assert.deepEqual(apiNode.options, {
-				initValue: {
-					nested: true
-				}
-			});
-
 		});
 
 	});
