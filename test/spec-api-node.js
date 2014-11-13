@@ -159,4 +159,21 @@ describe('APINode', function () {
 
 	});
 
+	describe('APINode#getOption()', function () {
+
+		beforeEach(function () {
+			apiNode.options = {initValue: true};
+		});
+
+		it('should return value of requested param', function () {
+			assert.equal(apiNode.getOption('initValue'), true);
+			assert.equal(apiNode.getOption('wrong'), undefined);
+		});
+
+		it('should return whole options object with no parameters passed', function () {
+			assert.deepEqual(apiNode.getOption(), {initValue: true});
+		});
+
+	});
+
 });
