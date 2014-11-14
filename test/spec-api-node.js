@@ -1,24 +1,24 @@
 var assert = require('assert'),
 	APINode = require('../lib/api-node'),
 	extend = require('extend'),
-	data = require('./data'),
-	apiNodeDecl = extend(true, {}, data.decl_1_normalized['.layer.handlerOne']),
-	apiNodePath = '.layer.handlerOne',
-	apiNode,
-	treeStub = {
-		splitPath: function () {
-			return ['.', '.layer', '.layer.handlerOne'];
-		},
-		getNode: function (nodePath) {
-			return this.nodes[nodePath];
-		},
-		nodes: {
-			'.layer': extend(true, {}, data.decl_1_normalized['.layer']),
-			'.': extend(true, {}, data.decl_1_normalized['.'])
-		}
-	};
+	data = require('./data');
 
 describe('APINode', function () {
+	var apiNodeDecl = extend(true, {}, data.decl_1_normalized['.layer.handlerOne']),
+		apiNodePath = '.layer.handlerOne',
+		treeStub = {
+			splitPath: function () {
+				return ['.', '.layer', '.layer.handlerOne'];
+			},
+			getNode: function (nodePath) {
+				return this.nodes[nodePath];
+			},
+			nodes: {
+				'.layer': extend(true, {}, data.decl_1_normalized['.layer']),
+				'.': extend(true, {}, data.decl_1_normalized['.'])
+			}
+		},
+		apiNode;
 
 	beforeEach(function () {
 		apiNode = new APINode({
@@ -62,7 +62,7 @@ describe('APINode', function () {
 		});
 	});
 
-	describe('APINode#getNameFromPath()', function () {
+	describe('#getNameFromPath()', function () {
 		it('should parse nodePath and return it\'s name', function () {
 			assert.equal(apiNode.getNameFromPath('.layer.handler'), 'handler');
 			assert.equal(apiNode.getNameFromPath('.layer'), 'layer');
@@ -70,7 +70,7 @@ describe('APINode', function () {
 		});
 	});
 
-	describe('APINode#getParent()', function () {
+	describe('#getParent()', function () {
 		it('should return parent node without arguments', function () {
 			assert.equal(apiNode.getParent(), treeStub.nodes['.layer']);
 		});
@@ -84,19 +84,19 @@ describe('APINode', function () {
 		});
 	});
 
-	describe('APINode#getParents', function () {
+	describe('#getParents()', function () {
 		it('should retunr array with all parents nodes', function () {
 			assert.deepEqual(apiNode.getParents(), [treeStub.nodes['.'], treeStub.nodes['.layer']]);
 		});
 	});
 
-	describe('APINode#setTree()', function () {
+	describe('#setTree()', function () {
 		it('should add method #getTree(), that returns APIShadowTree instance from closure', function () {
 			assert.equal(apiNode.getTree(), treeStub);
 		});
 	});
 
-	describe('APINode#getOptionsChain()', function () {
+	describe('#getOptionsChain()', function () {
 		it('should return array of options of all parents and current node in right order', function () {
 			var optionsChain;
 
@@ -116,32 +116,28 @@ describe('APINode', function () {
 		});
 	});
 
-	describe('APINode#setOption()', function () {
+	describe('#setOption()', function () {
 		beforeEach(function () {
 			apiNode.options = {initValue: true};
 		});
 
 		it('should set options with a given value', function () {
 			apiNode.setOption('initValue', false);
-
 			assert.deepEqual(apiNode.options, {initValue: false});
 
 			apiNode.setOption('nested', {value: true});
-
 			assert.deepEqual(apiNode.options, {
 				initValue: false,
 				nested: {value: true}
 			});
 
 			apiNode.setOption('nested', {replace: true});
-
 			assert.deepEqual(apiNode.options, {
 				initValue: false,
 				nested: {replace: true}
 			});
 
 			apiNode.setOption('nested', {value: true}, true);
-
 			assert.deepEqual(apiNode.options, {
 				initValue: false,
 				nested: {
@@ -153,13 +149,12 @@ describe('APINode', function () {
 
 		it('should accept one string argument and delete options.param', function () {
 			apiNode.setOption('initValue');
-
 			assert.deepEqual(apiNode.options, {});
 		});
 
 	});
 
-	describe('APINode#getOption()', function () {
+	describe('#getOption()', function () {
 
 		beforeEach(function () {
 			apiNode.options = {initValue: true};
