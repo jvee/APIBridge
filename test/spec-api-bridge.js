@@ -127,5 +127,27 @@ describe('apiBridge integration test', function () {
 
 	});
 
+	describe('Setters & Getters', function () {
+
+		it('can set & get options for whole api', function () {
+			api._set('data', { someOption: 'someValue' });
+			assert.equal(api._get('data').someOption, 'someValue');
+
+			return api.layer.handlerOne().then(function (response) {
+				assert.equal(response.data.query.someOption, 'someValue');
+			});
+		});
+
+		it('can set & get options for specified node', function () {
+			api._set('.layer.handlerOne','data', { specified: true });
+			assert.equal(api._get('.layer.handlerOne', 'data').specified, true);
+
+			return api.layer.handlerOne().then(function (response) {
+				assert.equal(response.data.query.specified, 'true');
+			});
+		});
+
+	});
+
 
 });
