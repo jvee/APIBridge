@@ -1,10 +1,10 @@
 var assert = require('assert'),
 	serverConfig = require('./server/config'),
 	server = require('./server/server'),
-	apiBridge = require('../lib/api-bridge.js'),
-	testHost, apiDecl, api;
+	apiBridge = require('../lib/api-bridge.js');
 
 describe('apiBridge integration test', function () {
+	var testHost, apiDecl, api;
 
 	before(function () {
 		server = server.listen(serverConfig.port);
@@ -29,7 +29,6 @@ describe('apiBridge integration test', function () {
 				},
 				processResult: function (options, result) {
 					assert.ok(result.data);
-					// совсем не нравится "result.request"
 					assert.ok(result.request);
 					assert.equal(this, api);
 
@@ -88,7 +87,10 @@ describe('apiBridge integration test', function () {
 		});
 
 		it('should return promise', function () {
-			assert.equal(typeof api.layer.handlerOne().then, 'function');
+			var promise = api.layer.handlerOne();
+			assert.equal(typeof promise.then, 'function');
+
+			return promise;
 		});
 
 		it('should create request', function () {
@@ -118,12 +120,9 @@ describe('apiBridge integration test', function () {
 		it('should exec node with function passed as options', function () {
 			return api.layer.handlerThree({}, {cascade:{handlerLevel: true}})
 				.then(function (result) {
-					console.log(result);
 					assert.ok(result.data.functionExecuted);
 				});
 		});
-
-		// it('should exec promise.fail if options.prefilter returns false', function () {});
 
 	});
 
