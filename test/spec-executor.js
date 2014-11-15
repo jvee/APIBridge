@@ -53,7 +53,7 @@ describe('Executor', function () {
 			H.returnPromise(deferred).progress(function (progress) {
 				assert.equal(progress.stage, 'testStage');
 				assert.equal(progress.task, 'testTask');
-				assert.equal(progress.response, wiredArgs[1]);
+				assert.equal(progress.result, wiredArgs[1]);
 				done();
 			});
 
@@ -75,14 +75,14 @@ describe('Executor', function () {
 						context: true
 					}
 				},
-				// response
+				// result
 				{}
 			];
 
-		function testFunc(options, response) {
+		function testFunc(options, result) {
 			assert.deepEqual(this, {context: true});
 			assert.equal(options, wiredArgs[0]);
-			assert.equal(response, wiredArgs[1]);
+			assert.equal(result, wiredArgs[1]);
 		}
 
 		it('should add binded to options.ctx function with wired argument', function () {
@@ -108,9 +108,9 @@ describe('Executor', function () {
 
 			executor._scope.ctx = { context: true };
 
-			executor._scope['_stage'] = [function (options, response) {
+			executor._scope['_stage'] = [function (options, result) {
 				assert.equal(options, wiredArgs[0]);
-				assert.equal(response, wiredArgs[1]);
+				assert.equal(result, wiredArgs[1]);
 				assert.equal(this, executor._scope.ctx);
 			}];
 
@@ -123,19 +123,19 @@ describe('Executor', function () {
 	});
 
 	describe('#buildQueue()', function () {
-		var options, response, deferred, execution;
+		var options, result, deferred, execution;
 
 		beforeEach(function () {
 			options = {
-				prefilter: [function prefilterTest(options, response, deferred) {
-					response.prefilterExecuted = true;
+				prefilter: [function prefilterTest(options, result, deferred) {
+					result.prefilterExecuted = true;
 				}] ,
-				processResult: [function processResultTest(options, response, deferred) {
-					response.processResultExecuted = true;
-					return response;
+				processResult: [function processResultTest(options, result, deferred) {
+					result.processResultExecuted = true;
+					return result;
 				}]
 			};
-			response = {};
+			result = {};
 			deferred = H.Deferred();
 		});
 
@@ -144,24 +144,24 @@ describe('Executor', function () {
 				assert.equal(Object.prototype.toString.call(passedTaskQueue), '[object Array]');
 				assert.ok(executor.stages.indexOf(passedStage) >= 0);
 				assert.equal(passedWiredArgs[0], options);
-				assert.equal(passedWiredArgs[1], response);
+				assert.equal(passedWiredArgs[1], result);
 			};
 
-			execution = executor.buildQueue([options, response, deferred]);
+			execution = executor.buildQueue([options, result, deferred]);
 
 			assert.equal(typeof execution.then, 'function');
 		});
 
 		it('should stop execution if deferred rejected', function () {
-			options.prefilter.push(function (options, response, deferred) {
+			options.prefilter.push(function (options, result, deferred) {
 				deferred.reject();
 			});
 
-			execution = executor.buildQueue([options, response, deferred]);
+			execution = executor.buildQueue([options, result, deferred]);
 
 			return execution.fail(function (error) {
-				assert.ok(response.prefilterExecuted);
-				assert.ok(!response.processResultExecuted);
+				assert.ok(result.prefilterExecuted);
+				assert.ok(!result.processResultExecuted);
 				assert.ok(error instanceof Error);
 				assert.equal(error.message, 'stopped');
 			});
@@ -172,7 +172,7 @@ describe('Executor', function () {
 				stageNames = ['prefilter', 'processResult'];
 				progressInitCount = 0;
 
-			execution = executor.buildQueue([options, response, deferred]);
+			execution = executor.buildQueue([options, result, deferred]);
 
 			H.returnPromise(deferred).progress(function(progress) {
 				assert.ok(taskNames.indexOf(progress.task) > -1);
@@ -180,10 +180,10 @@ describe('Executor', function () {
 				progressInitCount++;
 			});
 
-			return execution.then(function (response) {
+			return execution.then(function (result) {
 					assert.equal(progressInitCount, 2);
-					assert.ok(response.prefilterExecuted);
-					assert.ok(response.processResultExecuted);
+					assert.ok(result.prefilterExecuted);
+					assert.ok(result.processResultExecuted);
 				});
 
 		});

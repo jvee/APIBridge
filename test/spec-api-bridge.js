@@ -21,22 +21,22 @@ describe('apiBridge integration test', function () {
 				cascade: {
 					rootLevel: true
 				},
-				prefilter: function (options, response) {
+				prefilter: function (options, result) {
 					assert.ok(options.cascade.rootLevel);
 					assert.ok(options.cascade.layerLevel);
 					assert.ok(options.cascade.handlerLevel);
 					assert.equal(this, api);
 				},
-				processResult: function (options, response) {
-					assert.ok(response.data);
-					// совсем не нравится "response.request"
-					assert.ok(response.request);
+				processResult: function (options, result) {
+					assert.ok(result.data);
+					// совсем не нравится "result.request"
+					assert.ok(result.request);
 					assert.equal(this, api);
 
 					// это не правильно? 
 					// хотя может и вариант, т.к это простой способ
 					// вынесте из объекта под объект
-					return response;
+					// return result;
 				},
 			},
 
@@ -55,9 +55,9 @@ describe('apiBridge integration test', function () {
 
 			'.layer.handlerTwo': testHost + 'layer/handlerTwo',
 
-			'.layer.handlerThree': function (options, response) {
-				response.data = { functionExecuted: true };
-				response.request = {};
+			'.layer.handlerThree': function (options, result) {
+				result.data = { functionExecuted: true };
+				result.request = {};
 			}
 		};
 
@@ -73,7 +73,7 @@ describe('apiBridge integration test', function () {
 	describe('API handler', function () {
 		var callbackExecuted;
 	
-		function callback(response) {
+		function callback(result) {
 			assert.equal(this, api);
 			callbackExecuted = true;
 		}
@@ -93,33 +93,33 @@ describe('apiBridge integration test', function () {
 
 		it('should create request', function () {
 			return api.layer.handlerOne(callback)
-				.then(function (response) {
+				.then(function (result) {
 					assert.equal(callbackExecuted, true);
-					assert.equal(response.request.status, 200);
+					assert.equal(result.request.status, 200);
 				});
 		});
 
 		it('should fail if executed with wrong params', function () {
 			return api.layer.handlerOne({ code: 404 }, callback)
-				.fail(function (response) {
+				.fail(function (result) {
 					assert.equal(callbackExecuted, true);
-					// не сохранена структура response при then и fail
-					assert.equal(response.status, 404);
+					// не сохранена структура result при then и fail
+					assert.equal(result.status, 404);
 				});
 		});
 
 		it('should exec node with string passed as options', function () {
 			return api.layer.handlerTwo({}, {cascade:{handlerLevel: true}})
-				.then(function (response) {
-					assert.equal(response.data.path, '/layer/handlerTwo');
+				.then(function (result) {
+					assert.equal(result.data.path, '/layer/handlerTwo');
 				});
 		});
 
 		it('should exec node with function passed as options', function () {
 			return api.layer.handlerThree({}, {cascade:{handlerLevel: true}})
-				.then(function (response) {
-					console.log(response);
-					assert.ok(response.data.functionExecuted);
+				.then(function (result) {
+					console.log(result);
+					assert.ok(result.data.functionExecuted);
 				});
 		});
 
@@ -133,8 +133,8 @@ describe('apiBridge integration test', function () {
 			api._set('data', { someOption: 'someValue' });
 			assert.equal(api._get('data').someOption, 'someValue');
 
-			return api.layer.handlerOne().then(function (response) {
-				assert.equal(response.data.query.someOption, 'someValue');
+			return api.layer.handlerOne().then(function (result) {
+				assert.equal(result.data.query.someOption, 'someValue');
 			});
 		});
 
@@ -142,8 +142,8 @@ describe('apiBridge integration test', function () {
 			api._set('.layer.handlerOne','data', { specified: true });
 			assert.equal(api._get('.layer.handlerOne', 'data').specified, true);
 
-			return api.layer.handlerOne().then(function (response) {
-				assert.equal(response.data.query.specified, 'true');
+			return api.layer.handlerOne().then(function (result) {
+				assert.equal(result.data.query.specified, 'true');
 			});
 		});
 
