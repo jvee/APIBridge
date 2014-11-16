@@ -249,6 +249,106 @@ describe('Executor', function () {
 	});
 
 	describe('#exec()', function () {
+		var optionsChainArg, dataArg, optionsArg, callbackArg,
+			buildQueueExecuted, smartExtendExecuted, buildQueue,
+			smartExtend, callbackExecuted, result;
+
+		function assertFlags() {
+			assert.ok(smartExtendExecuted);
+			assert.ok(buildQueueExecuted);
+		}
+
+		beforeEach(function () {
+			// flag reset
+			buildQueueExecuted = false;
+			smartExtendExecuted = false;
+			callbackExecuted = false;
+
+			// arguments reset
+			optionsChainArg = [];
+			dataArg = {value: true};
+			optionsArg = {};
+			callbackArg = function (res) {
+				assert.equal(res, result);
+				callbackExecuted = true;
+			};
+
+			// creating stubs
+			buildQueue = function (wiredArgs) {
+				var buildDefer = new H.Deferred();
+
+				assert.ok(H.isArray(wiredArgs));
+				assert.ok(H.isPlainObject(wiredArgs[0])); // options
+				assert.ok(H.isPlainObject(wiredArgs[1])); // result
+				assert.equal(typeof wiredArgs[2].resolve, 'function'); // deferred
+
+				result = wiredArgs[1];
+				buildDefer.resolve();
+				buildQueueExecuted = true;
+				return H.returnPromise(buildDefer);
+			};
+
+			smartExtend = function (optionsChain, options) {
+				assert.equal(optionsChain, optionsChainArg);
+				assert.ok(H.isPlainObject(options));
+				smartExtendExecuted = true;
+				return {};
+			};
+
+			executor.buildQueue = buildQueue;
+			executor.smartExtend = smartExtend;
+		});
+
+		it('should return promise', function () {
+			var promise = executor.exec(optionsChainArg);
+
+			assert.equal(typeof promise.then, 'function');
+			assertFlags();
+		});
+
+		it('can accept data argument', function () {
+			executor.smartExtend = function (optionsChain, options) {
+				assert.deepEqual(options.data, {value: true});
+				return smartExtend.apply(executor, arguments);
+			};
+
+			executor.exec(optionsChainArg, dataArg);
+			assertFlags();
+		});
+
+		it('can accept options arguments only with data', function () {
+			executor.smartExtend = function (optionsChain, options) {
+				assert.equal(options, optionsArg);
+				return smartExtend.apply(executor, arguments);
+			};
+
+			executor.exec(optionsChainArg, dataArg, optionsArg);
+			assertFlags();
+		});
+
+		it('can accept last callback argument', function () {
+			return executor.exec(optionsChainArg, dataArg, optionsArg, callbackArg)
+				.then(function () {
+					assert.ok(callbackExecuted);
+					assertFlags();
+				});
+		});
+
+		it('can accept callback argument instead of options', function () {
+			return executor.exec(optionsChainArg, dataArg, callbackArg)
+				.then(function () {
+					assert.ok(callbackExecuted);
+					assertFlags();
+				});
+		});
+
+		it('can accept callback argument instead of data', function () {
+			return executor.exec(optionsChainArg, callbackArg)
+				.then(function () {
+					assert.ok(callbackExecuted);
+					assertFlags();
+				});
+		});
 
 	});
 
