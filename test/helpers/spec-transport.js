@@ -22,8 +22,7 @@ describe('helpres/transport', function () {
 	it('should accept type (request method) option', function () {
 		return transport({url: testHost, type: 'POST'})
 			.then(function (response) {
-				// возвращать в ответе сервера
-				assert.equal(response.request.method, 'POST');
+				assert.equal(response.data.method, 'POST');
 			});
 	});
 
