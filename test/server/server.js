@@ -22,7 +22,8 @@ app.all('*', function (req, res) {
 		path: req.path,
 		body: req.body,
 		query: req.query,
-		headers: req.headers
+		headers: req.headers,
+		method: req.method
 	});
 });
 

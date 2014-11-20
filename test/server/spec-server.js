@@ -23,6 +23,7 @@ describe('Test Server', function () {
 			assert.equal(data.status, 'ok');
 			assert.equal(data.path, '/');
 			assert.equal(data.query.queryParam, 'someValue');
+			assert.equal(data.method, 'GET');
 
 			done();
 		});
@@ -41,6 +42,7 @@ describe('Test Server', function () {
 			assert.equal(data.path, '/');
 			assert.equal(data.body.bodyParam, 'someValue');
 			assert.equal(data.body.queryParam, undefined);
+			assert.equal(data.method, 'POST');
 
 			done();
 		});
