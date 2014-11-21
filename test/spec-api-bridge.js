@@ -97,7 +97,7 @@ describe('apiBridge integration test', function () {
 			return api.layer.handlerOne(callback)
 				.then(function (result) {
 					assert.equal(callbackExecuted, true);
-					assert.equal(result.request.status, 200);
+					assert.equal(result.status, 200);
 				});
 		});
 
