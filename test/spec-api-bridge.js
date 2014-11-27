@@ -148,5 +148,31 @@ describe('apiBridge integration test', function () {
 
 	});
 
+	describe('Plugin system', function () {
+
+		var plugin1 = function (stages, extendRules, options) {
+			stages._transport = function (options, result, deferred) {
+				// смотрим что пришло в options.cascade
+				// plugin1StageExecuted = true
+			};
+
+			extendRules.cascade = function (optionsChainItem) {
+				// plugin1ExtendExecuted
+				// return 'some uniq string'
+			};
+		};
+
+		describe('#plugin()', function () {
+			it('...', function () {
+				apiBridge.plugin(plugin1);
+
+				return api.layer.handlerOne().then(function (result) {
+					// assert.ok(plugin1StageExecuted);
+					// assert.ok(plugin1ExtendExecuted);
+				});
+			});
+		});
+	});
+
 
 });
