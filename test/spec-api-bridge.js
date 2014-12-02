@@ -149,29 +149,39 @@ describe('apiBridge integration test', function () {
 	});
 
 	describe('Plugin system', function () {
+		var plugin, plugin1StageExecuted, plugin1ExtendExecuted;
 
-		var plugin1 = {
-			name: 'Some plugin name',
-			initer: function (stages, extendRules) {
-				stages._transport = function (options, result, deferred) {
-					// смотрим что пришло в options.cascade
-					// plugin1StageExecuted = true
-				};
+		beforeEach(function () {
+			plugin1StageExecuted = false;
+			plugin1ExtendExecuted = false;
+			plugin1 = {
+				name: 'Some plugin name',
+				initer: function (stages, extendRules) {
+					stages._prefilter = function (options, result, deferred) {
+						assert.equal(options.cascade, 'some uniq string');
+						plugin1StageExecuted = true;
+					};
 
-				extendRules.cascade = function (optionsChainItem) {
-					// plugin1ExtendExecuted
-					// return 'some uniq string'
-				};
-			}
-		};
+					extendRules.cascade = function (optionsChainItem) {
+						plugin1ExtendExecuted = true;
+						assert.equal(arguments.length, 3);
+						return 'some uniq string';
+					};
+				}
+			};
+		});
+
+		
 
 		describe('#plugin()', function () {
-			it('...', function () {
+			it('should set up new sage & extend rule', function () {
 				apiBridge.plugin(plugin1);
+				delete apiDecl['.']['prefilter'];
+				api = apiBridge(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
-					// assert.ok(plugin1StageExecuted);
-					// assert.ok(plugin1ExtendExecuted);
+					assert.ok(plugin1StageExecuted);
+					assert.ok(plugin1ExtendExecuted);
 				});
 			});
 		});
