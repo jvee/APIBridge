@@ -156,25 +156,24 @@ describe('apiBridge integration test', function () {
 			plugin1ExtendExecuted = false;
 			plugin1 = {
 				name: 'Some plugin name',
-				initer: function (stages, extendRules) {
-					stages._prefilter = function (options, result, deferred) {
+				stages: {
+					_prefilter: function (options, result, deferred) {
 						assert.equal(options.cascade, 'some uniq string');
 						plugin1StageExecuted = true;
-					};
-
-					extendRules.cascade = function (optionsChainItem) {
+					}
+				},
+				extendRules: {
+					cascade: function (optionsChainItem) {
 						plugin1ExtendExecuted = true;
 						assert.equal(arguments.length, 3);
 						return 'some uniq string';
-					};
+					}
 				}
 			};
 		});
 
-		
-
 		describe('#plugin()', function () {
-			it('should set up new sage & extend rule', function () {
+			it('should set up new stage & extend rule', function () {
 				apiBridge.plugin(plugin1);
 				delete apiDecl['.']['prefilter'];
 				api = apiBridge(apiDecl);
