@@ -183,6 +183,21 @@ describe('apiBridge integration test', function () {
 					assert.ok(plugin1ExtendExecuted);
 				});
 			});
+
+			it('should accept function as arguments', function () {
+				apiBridge.plugin(function () {
+					return plugin1;
+				});
+
+				delete apiDecl['.']['prefilter'];
+				api = apiBridge(apiDecl);
+
+				return api.layer.handlerOne().then(function (result) {
+					assert.ok(plugin1StageExecuted);
+					assert.ok(plugin1ExtendExecuted);
+				});
+			});
+
 		});
 	});
 
