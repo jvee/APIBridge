@@ -149,12 +149,13 @@ describe('apiBridge integration test', function () {
 	});
 
 	describe('Plugin system', function () {
-		var plugin, plugin1StageExecuted, plugin1ExtendExecuted;
+		var plugin, plugin1StageExecuted, plugin1ExtendExecuted,
+			pluginAsFunction;
 
 		beforeEach(function () {
-			plugin1StageExecuted = false;
-			plugin1ExtendExecuted = false;
-			plugin1 = {
+			pluginStageExecuted = false;
+			pluginExtendExecuted = false;
+			pluginAsObject = {
 				name: 'Some plugin name',
 				stages: {
 					_prefilter: function (options, result, deferred) {
@@ -170,12 +171,18 @@ describe('apiBridge integration test', function () {
 					}
 				}
 			};
+
+			pluginAsFunction = function () {
+				return pluginAsObject;
+			};
+
+			delete apiDecl['.']['prefilter'];
+			apiBridge.pluginReset();
 		});
 
 		describe('#plugin()', function () {
 			it('should set up new stage & extend rule', function () {
-				apiBridge.plugin(plugin1);
-				delete apiDecl['.']['prefilter'];
+				apiBridge.plugin(pluginAsObject);
 				api = apiBridge(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
@@ -185,11 +192,7 @@ describe('apiBridge integration test', function () {
 			});
 
 			it('should accept function as arguments', function () {
-				apiBridge.plugin(function () {
-					return plugin1;
-				});
-
-				delete apiDecl['.']['prefilter'];
+				apiBridge.plugin(pluginAsFunction);
 				api = apiBridge(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
