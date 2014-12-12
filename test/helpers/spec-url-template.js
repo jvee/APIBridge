@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    urlBuilder = require('../lib/url-builder');
+    urlBuilder = require('../../lib/helpers/url-template');
 
 describe('UrlBuilder', function () {
 
