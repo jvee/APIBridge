@@ -149,7 +149,7 @@ describe('apiBridge integration test', function () {
 	});
 
 	describe('Plugin system', function () {
-		var plugin, plugin1StageExecuted, plugin1ExtendExecuted,
+		var plugin, pluginStageExecuted, pluginExtendExecuted,
 			pluginAsFunction;
 
 		beforeEach(function () {
@@ -160,12 +160,12 @@ describe('apiBridge integration test', function () {
 				stages: {
 					_prefilter: function (options, result, deferred) {
 						assert.equal(options.cascade, 'some uniq string');
-						plugin1StageExecuted = true;
+						pluginStageExecuted = true;
 					}
 				},
 				extendRules: {
 					cascade: function (optionsChainItem) {
-						plugin1ExtendExecuted = true;
+						pluginExtendExecuted = true;
 						assert.equal(arguments.length, 3);
 						return 'some uniq string';
 					}
@@ -186,8 +186,8 @@ describe('apiBridge integration test', function () {
 				api = apiBridge(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
-					assert.ok(plugin1StageExecuted);
-					assert.ok(plugin1ExtendExecuted);
+					assert.ok(pluginStageExecuted);
+					assert.ok(pluginExtendExecuted);
 				});
 			});
 
@@ -196,8 +196,8 @@ describe('apiBridge integration test', function () {
 				api = apiBridge(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
-					assert.ok(plugin1StageExecuted);
-					assert.ok(plugin1ExtendExecuted);
+					assert.ok(pluginStageExecuted);
+					assert.ok(pluginExtendExecuted);
 				});
 			});
 
