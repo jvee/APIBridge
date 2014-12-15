@@ -201,6 +201,22 @@ describe('apiBridge integration test', function () {
 				});
 			});
 
+			it('should set up several stages', function () {
+				pluginAsObject.stages._processResult = function (options, result, defferred) {
+					result.secondStageInited = true;
+				};
+
+				apiBridge.plugin(pluginAsObject);
+				api = apiBridge(apiDecl);
+
+				return api.layer.handlerOne().then(function (result) {
+					assert.ok(result.secondStageInited);
+					assert.ok(pluginStageExecuted);
+					assert.ok(pluginExtendExecuted);
+				});
+
+			});
+
 		});
 	});
 
