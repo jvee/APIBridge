@@ -1,5 +1,6 @@
 var assert = require('assert'),
-    urlBuilder = require('../../lib/helpers/url-template').UrlBuilder;
+    urlTemplate = require('../../lib/helpers/url-template'),
+    urlBuilder = urlTemplate.UrlBuilder;
 
 describe('UrlBuilder', function () {
 
@@ -155,4 +156,19 @@ describe('UrlBuilder', function () {
 		});
     });
 
+});
+
+describe('urlTemplate', function () {
+    // merge describe('UrlBuilder')
+    it('should work similar to UrlBuilder.build', function () {
+        var options = {
+            url: 'test/:id',
+            data: {
+                id: 123
+            }
+        };
+
+        result = urlTemplate(options);
+        assert.equal(result, 'test/123');
+    });
 });
