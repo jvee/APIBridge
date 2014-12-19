@@ -120,8 +120,10 @@ describe('UrlBuilder', function () {
     });
 
     describe('#build()', function () {
+        var result;
+
 		it('should pass test for (test/:id)', function () {
-			var result = urlBuilder.build('test/:id', {
+			result = urlBuilder.build('test/:id', {
 				id: 123
 			});
 
@@ -159,6 +161,8 @@ describe('UrlBuilder', function () {
 });
 
 describe('urlTemplate', function () {
+    var result;
+
     // merge describe('UrlBuilder')
     it('should work similar to UrlBuilder.build', function () {
         var options = {
