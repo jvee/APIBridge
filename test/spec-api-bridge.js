@@ -57,6 +57,10 @@ describe('apiBridge integration test', function () {
 			'.layer.handlerThree': function (options, result) {
 				result.data = { functionExecuted: true };
 				result.request = {};
+			},
+
+			'.layer.handlerFour' : {
+				url: testHost + 'layer/handlerFout/:id'
 			}
 		};
 
@@ -121,6 +125,13 @@ describe('apiBridge integration test', function () {
 			return api.layer.handlerThree({}, {cascade:{handlerLevel: true}})
 				.then(function (result) {
 					assert.ok(result.data.functionExecuted);
+				});
+		});
+
+		it('should work with url-template  plugin', function () {
+			return api.layer.handlerFour({id:100500}, {cascade:{handlerLevel: true}})
+				.then(function (result) {
+					assert.equal(result.data.path, '/layer/handlerFout/100500');
 				});
 		});
 
