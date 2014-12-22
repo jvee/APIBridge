@@ -140,24 +140,6 @@ describe('urlTemplate', function () {
 
                 assert.equal(result, 'test/123/0');
             });
-
-            it('should pass test for (test/:id + query di) ', function () {
-                result = urlBuilder.build('test/:id', {
-                    id: 123,
-                    di: 0
-                });
-
-                assert.equal(result, 'test/123?di=0');
-            });
-
-            it('should pass test for (test/:id?newId=0 + query di)', function () {
-                result = urlBuilder.build('test/:id?newId=0', {
-                    id: 123,
-                    di: 0
-                });
-
-                assert.equal(result, 'test/123?newId=0&di=0');
-            });
         });
 
     });
