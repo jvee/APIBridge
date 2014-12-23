@@ -61,6 +61,11 @@ describe('apiBridge integration test', function () {
 
 			'.layer.handlerFour' : {
 				url: testHost + 'layer/handlerFout/:id'
+			},
+
+			'.layer.handlerFive' : {
+				type: 'POST',
+				url: testHost + 'layer/handlerFive/:id',
 			}
 		};
 
@@ -128,10 +133,20 @@ describe('apiBridge integration test', function () {
 				});
 		});
 
-		it('should work with url-template  plugin', function () {
-			return api.layer.handlerFour({id:100500}, {cascade:{handlerLevel: true}})
+		it('should work with url-template plugin', function () {
+			return api.layer.handlerFour({id:100500, additional: true}, {cascade:{handlerLevel: true}})
 				.then(function (result) {
 					assert.equal(result.data.path, '/layer/handlerFout/100500');
+					assert.ok(result.data.query.additional);
+				});
+		});
+
+		it('should work with url-template plugin and post method', function () {
+			return api.layer.handlerFive({id: 1, additional: true}, {cascade:{handlerLevel: true}})
+				.then(function (result) {
+					assert.equal(result.data.method, 'POST');
+					assert.ok(result.data.body.additional);
+					assert.ok(!result.data.body.id);
 				});
 		});
 
