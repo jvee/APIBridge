@@ -1,9 +1,9 @@
 var assert = require('assert'),
 	serverConfig = require('../server/config'),
 	server = require('../server/server'),
-	transport = require('../../lib/helpers/transport.js');
+	transport = require('../../lib/plugins/transport.js');
 
-describe('helpres/transport', function () {
+describe('plugins/transport', function () {
 	var testHost;
 
 	before(function () {

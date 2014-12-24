@@ -1,7 +1,7 @@
 var assert = require('assert'),
-	extendFunctions = require('../../lib/helpers/extendFunctions');
+	extendFunctions = require('../../lib/plugins/extendFunctions');
 
-describe('helpers/extendFunctions', function () {
+describe('plugins/extendFunctions', function () {
 	var optionsChain, extendFunctionSome, result;
 
 	var f1 = function () {},

@@ -1,8 +1,8 @@
 var assert = require('assert'),
-    urlTemplate = require('../../lib/helpers/url-template'),
+    urlTemplate = require('../../lib/plugins/url-template'),
     urlBuilder = urlTemplate.UrlBuilder;
 
-describe('urlTemplate', function () {
+describe('plugins/urlTemplate', function () {
 
     describe('UrlBuilder', function () {
 
