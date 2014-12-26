@@ -6,7 +6,7 @@ var assert = require('assert'),
 describe('APINode', function () {
 	var apiNodeDecl = extend(true, {}, data.decl_1_normalized['.layer.handlerOne']),
 		apiNodePath = '.layer.handlerOne',
-		treeStub = {
+		modelStub = {
 			splitPath: function () {
 				return ['.', '.layer', '.layer.handlerOne'];
 			},
@@ -23,7 +23,7 @@ describe('APINode', function () {
 	beforeEach(function () {
 		apiNode = new APINode({
 			pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
-			tree: treeStub,
+			model: modelStub,
 			nodeType: 'handler',
 			options: apiNodeDecl
 		});
@@ -40,7 +40,7 @@ describe('APINode', function () {
 		it('should accept string as options and convert it to options.url', function () {
 			apiNode = new APINode({
 				pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
-				tree: treeStub,
+				model: modelStub,
 				nodeType: 'handler',
 				options: 'passed/url'
 			});
@@ -53,7 +53,7 @@ describe('APINode', function () {
 
 			apiNode = new APINode({
 				pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
-				tree: treeStub,
+				model: modelStub,
 				nodeType: 'handler',
 				options: testTransport
 			});
@@ -72,11 +72,11 @@ describe('APINode', function () {
 
 	describe('#getParent()', function () {
 		it('should return parent node without arguments', function () {
-			assert.equal(apiNode.getParent(), treeStub.nodes['.layer']);
+			assert.equal(apiNode.getParent(), modelStub.nodes['.layer']);
 		});
 
 		it('should return node from path in arguments', function () {
-			assert.equal(apiNode.getParent('.'), treeStub.nodes['.']);
+			assert.equal(apiNode.getParent('.'), modelStub.nodes['.']);
 		});
 
 		it('should return undefined with wrong argument', function () {
@@ -86,13 +86,13 @@ describe('APINode', function () {
 
 	describe('#getParents()', function () {
 		it('should retunr array with all parents nodes', function () {
-			assert.deepEqual(apiNode.getParents(), [treeStub.nodes['.'], treeStub.nodes['.layer']]);
+			assert.deepEqual(apiNode.getParents(), [modelStub.nodes['.'], modelStub.nodes['.layer']]);
 		});
 	});
 
-	describe('#setTree()', function () {
-		it('should add method #getTree(), that returns APIShadowTree instance from closure', function () {
-			assert.equal(apiNode.getTree(), treeStub);
+	describe('#setModel()', function () {
+		it('should add method #getModel(), that returns api\'s model instance from closure', function () {
+			assert.equal(apiNode.getModel(), modelStub);
 		});
 	});
 
@@ -100,11 +100,11 @@ describe('APINode', function () {
 		it('should return array of options of all parents and current node in right order', function () {
 			var optionsChain;
 
-			treeStub.nodes['.'].options = {
-				cascade: treeStub.nodes['.'].cascade
+			modelStub.nodes['.'].options = {
+				cascade: modelStub.nodes['.'].cascade
 			};
-			treeStub.nodes['.layer'].options = {
-				cascade: treeStub.nodes['.layer'].cascade
+			modelStub.nodes['.layer'].options = {
+				cascade: modelStub.nodes['.layer'].cascade
 			};
 
 			optionsChain = apiNode.getOptionsChain();

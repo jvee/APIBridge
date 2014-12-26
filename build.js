@@ -2,7 +2,7 @@ var requirejs = require('requirejs');
 
 var config = {
 		baseUrl: __dirname + '/lib',
-		name: 'api-tree',
+		name: 'model',
 		// в будузем exclude и path не понадобятся, временная хрень
 		exclude: ['node-jquery', 'jQuery', 'q', 'extend'],
 		paths: {
