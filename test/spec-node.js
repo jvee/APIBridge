@@ -1,11 +1,11 @@
 var assert = require('assert'),
-	APINode = require('../lib/api-node'),
+	Node = require('../lib/node'),
 	extend = require('extend'),
 	data = require('./data');
 
-describe('APINode', function () {
-	var apiNodeDecl = extend(true, {}, data.decl_1_normalized['.layer.handlerOne']),
-		apiNodePath = '.layer.handlerOne',
+describe('Node', function () {
+	var nodeDecl = extend(true, {}, data.decl_1_normalized['.layer.handlerOne']),
+		nodePath = '.layer.handlerOne',
 		modelStub = {
 			splitPath: function () {
 				return ['.', '.layer', '.layer.handlerOne'];
@@ -18,81 +18,81 @@ describe('APINode', function () {
 				'.': extend(true, {}, data.decl_1_normalized['.'])
 			}
 		},
-		apiNode;
+		node;
 
 	beforeEach(function () {
-		apiNode = new APINode({
+		node = new Node({
 			pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
 			model: modelStub,
 			nodeType: 'handler',
-			options: apiNodeDecl
+			options: nodeDecl
 		});
 	});
 
 	describe('initialize', function () {
 		it('should construct object', function () {
-			assert.equal(apiNode.name, 'handlerOne');
-			assert.equal(apiNode.nodeType, 'handler');
-			assert.equal(apiNode.path, '.layer.handlerOne');
-			assert.deepEqual(apiNode.parents, ['.', '.layer']);
+			assert.equal(node.name, 'handlerOne');
+			assert.equal(node.nodeType, 'handler');
+			assert.equal(node.path, '.layer.handlerOne');
+			assert.deepEqual(node.parents, ['.', '.layer']);
 		});
 
 		it('should accept string as options and convert it to options.url', function () {
-			apiNode = new APINode({
+			node = new Node({
 				pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
 				model: modelStub,
 				nodeType: 'handler',
 				options: 'passed/url'
 			});
 
-			assert.equal(apiNode.options.url, 'passed/url');
+			assert.equal(node.options.url, 'passed/url');
 		});
 
 		it('should accept function as options and convert it to options.transport', function () {
 			var testTransport = function () {};
 
-			apiNode = new APINode({
+			node = new Node({
 				pathCascade: [ '.', '.layer', '.layer.handlerOne' ],
 				model: modelStub,
 				nodeType: 'handler',
 				options: testTransport
 			});
 
-			assert.equal(apiNode.options.transport, testTransport);
+			assert.equal(node.options.transport, testTransport);
 		});
 	});
 
 	describe('#getNameFromPath()', function () {
 		it('should parse nodePath and return it\'s name', function () {
-			assert.equal(apiNode.getNameFromPath('.layer.handler'), 'handler');
-			assert.equal(apiNode.getNameFromPath('.layer'), 'layer');
-			assert.equal(apiNode.getNameFromPath('.'), '');
+			assert.equal(node.getNameFromPath('.layer.handler'), 'handler');
+			assert.equal(node.getNameFromPath('.layer'), 'layer');
+			assert.equal(node.getNameFromPath('.'), '');
 		});
 	});
 
 	describe('#getParent()', function () {
 		it('should return parent node without arguments', function () {
-			assert.equal(apiNode.getParent(), modelStub.nodes['.layer']);
+			assert.equal(node.getParent(), modelStub.nodes['.layer']);
 		});
 
 		it('should return node from path in arguments', function () {
-			assert.equal(apiNode.getParent('.'), modelStub.nodes['.']);
+			assert.equal(node.getParent('.'), modelStub.nodes['.']);
 		});
 
 		it('should return undefined with wrong argument', function () {
-			assert.equal(apiNode.getParent('.test'), undefined);
+			assert.equal(node.getParent('.test'), undefined);
 		});
 	});
 
 	describe('#getParents()', function () {
 		it('should retunr array with all parents nodes', function () {
-			assert.deepEqual(apiNode.getParents(), [modelStub.nodes['.'], modelStub.nodes['.layer']]);
+			assert.deepEqual(node.getParents(), [modelStub.nodes['.'], modelStub.nodes['.layer']]);
 		});
 	});
 
 	describe('#setModel()', function () {
 		it('should add method #getModel(), that returns api\'s model instance from closure', function () {
-			assert.equal(apiNode.getModel(), modelStub);
+			assert.equal(node.getModel(), modelStub);
 		});
 	});
 
@@ -107,7 +107,7 @@ describe('APINode', function () {
 				cascade: modelStub.nodes['.layer'].cascade
 			};
 
-			optionsChain = apiNode.getOptionsChain();
+			optionsChain = node.getOptionsChain();
 
 			assert.equal(optionsChain.length, 3);
 			assert.equal(optionsChain[0].cascade.rootLevel, true);
@@ -118,27 +118,27 @@ describe('APINode', function () {
 
 	describe('#setOption()', function () {
 		beforeEach(function () {
-			apiNode.options = {initValue: true};
+			node.options = {initValue: true};
 		});
 
 		it('should set options with a given value', function () {
-			apiNode.setOption('initValue', false);
-			assert.deepEqual(apiNode.options, {initValue: false});
+			node.setOption('initValue', false);
+			assert.deepEqual(node.options, {initValue: false});
 
-			apiNode.setOption('nested', {value: true});
-			assert.deepEqual(apiNode.options, {
+			node.setOption('nested', {value: true});
+			assert.deepEqual(node.options, {
 				initValue: false,
 				nested: {value: true}
 			});
 
-			apiNode.setOption('nested', {replace: true});
-			assert.deepEqual(apiNode.options, {
+			node.setOption('nested', {replace: true});
+			assert.deepEqual(node.options, {
 				initValue: false,
 				nested: {replace: true}
 			});
 
-			apiNode.setOption('nested', {value: true}, true);
-			assert.deepEqual(apiNode.options, {
+			node.setOption('nested', {value: true}, true);
+			assert.deepEqual(node.options, {
 				initValue: false,
 				nested: {
 					replace: true,
@@ -148,8 +148,8 @@ describe('APINode', function () {
 		});
 
 		it('should accept one string argument and delete options.param', function () {
-			apiNode.setOption('initValue');
-			assert.deepEqual(apiNode.options, {});
+			node.setOption('initValue');
+			assert.deepEqual(node.options, {});
 		});
 
 	});
@@ -157,16 +157,16 @@ describe('APINode', function () {
 	describe('#getOption()', function () {
 
 		beforeEach(function () {
-			apiNode.options = {initValue: true};
+			node.options = {initValue: true};
 		});
 
 		it('should return value of requested param', function () {
-			assert.equal(apiNode.getOption('initValue'), true);
-			assert.equal(apiNode.getOption('wrong'), undefined);
+			assert.equal(node.getOption('initValue'), true);
+			assert.equal(node.getOption('wrong'), undefined);
 		});
 
 		it('should return whole options object with no parameters passed', function () {
-			assert.deepEqual(apiNode.getOption(), {initValue: true});
+			assert.deepEqual(node.getOption(), {initValue: true});
 		});
 
 	});
