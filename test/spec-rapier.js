@@ -1,9 +1,9 @@
 var assert = require('assert'),
 	serverConfig = require('./server/config'),
 	server = require('./server/server'),
-	apiBridge = require('../lib/api-bridge.js');
+	rapier = require('../lib/rapier');
 
-describe('apiBridge integration test', function () {
+describe('rapier integration test', function () {
 	var testHost, apiDecl, api;
 
 	before(function () {
@@ -69,7 +69,7 @@ describe('apiBridge integration test', function () {
 			}
 		};
 
-		api = apiBridge(apiDecl);
+		api = rapier(apiDecl);
 	});
 
 	it('should export correct strucutre', function () {
@@ -203,13 +203,13 @@ describe('apiBridge integration test', function () {
 			};
 
 			delete apiDecl['.']['prefilter'];
-			apiBridge.pluginReset();
+			rapier.pluginReset();
 		});
 
 		describe('#plugin()', function () {
 			it('should set up new stage & extend rule', function () {
-				apiBridge.plugin(pluginAsObject);
-				api = apiBridge(apiDecl);
+				rapier.plugin(pluginAsObject);
+				api = rapier(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
 					assert.ok(pluginStageExecuted);
@@ -218,8 +218,8 @@ describe('apiBridge integration test', function () {
 			});
 
 			it('should accept function as arguments', function () {
-				apiBridge.plugin(pluginAsFunction);
-				api = apiBridge(apiDecl);
+				rapier.plugin(pluginAsFunction);
+				api = rapier(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
 					assert.ok(pluginStageExecuted);
@@ -232,8 +232,8 @@ describe('apiBridge integration test', function () {
 					result.secondStageInited = true;
 				};
 
-				apiBridge.plugin(pluginAsObject);
-				api = apiBridge(apiDecl);
+				rapier.plugin(pluginAsObject);
+				api = rapier(apiDecl);
 
 				return api.layer.handlerOne().then(function (result) {
 					assert.ok(result.secondStageInited);

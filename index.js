@@ -1,1 +1,1 @@
-module.exports = require('./lib/api-bridge');
+module.exports = require('./lib/rapier');
