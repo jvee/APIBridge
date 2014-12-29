@@ -4,5 +4,5 @@
 {
     "status": "under construction",
     "release": "soon"
-}
+};
 ```

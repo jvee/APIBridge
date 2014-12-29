@@ -1,7 +1,8 @@
 var assert = require('assert'),
 	serverConfig = require('../server/config'),
 	server = require('../server/server'),
-	transport = require('../../lib/plugins/transport.js');
+	plugin = require('../../lib/plugins/transport.js'),
+	transport = plugin.stages._transport; // переосмыслить тестирование плагинов
 
 describe('plugins/transport', function () {
 	var testHost;
