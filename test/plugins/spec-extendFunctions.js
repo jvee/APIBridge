@@ -1,5 +1,6 @@
 var assert = require('assert'),
-	extendFunctions = require('../../lib/plugins/extendFunctions');
+	plugin = require('../../lib/plugins/extendFunctions'),
+	extendFunctions = plugin.source;
 
 describe('plugins/extendFunctions', function () {
 	var optionsChain, extendFunctionSome, result;
