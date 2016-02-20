@@ -5,6 +5,7 @@
 // https://github.com/tobie/module-grapher
 // https://github.com/tobie/modulr-node
 // https://github.com/Magnetme/yoloader
+// 3. Обязательно попробовать http://rollupjs.org/
 
 var requirejs = require('requirejs');
 
